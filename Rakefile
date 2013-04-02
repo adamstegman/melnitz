@@ -1,12 +1,7 @@
-# coding: UTF-8
+#!/usr/bin/env rake
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require 'fileutils'
+require File.expand_path('../config/application', __FILE__)
 
-desc 'Downloads dependencies into the vendor/lib/ directory.'
-task :deps do
-  `mvn dependency:copy-dependencies`
-  FileUtils.mkdir_p 'vendor/lib'
-  Dir['target/dependency/*.jar'].each do |dependency|
-    FileUtils.cp dependency, 'vendor/lib/'
-  end
-end
+Melnitz::Application.load_tasks
