@@ -60,7 +60,15 @@ TODO: does uCern have a Jive API so I can do something similar to JIRA sorting?
 
 ## Development
 
-TODO
+Download the [EWS Java dependency][ewsapi] and extract it to `vendor/lib`.
+
+    mkdir -p vendor/lib
+    cp ~/Downloads/EWSJavaAPI_1.2/EWSJavaAPI_1.2.jar vendor/lib/
+
+Install [Maven][maven] to download other dependencies.
+Then run the rake task to copy down those dependencies so the scripts can use them.
+
+    rake deps
 
 ### Packaging and release
 
@@ -73,4 +81,5 @@ Copyright © 2013 Adam Stegman
 Distributed under the MIT License.
 
 [ewsapi]: http://archive.msdn.microsoft.com/ewsjavaapi
+[maven]: http://maven.apache.org/
 [melnitz]: http://en.wikipedia.org/wiki/Janine_Melnitz
