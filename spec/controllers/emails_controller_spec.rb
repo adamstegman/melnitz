@@ -42,7 +42,7 @@ describe EmailsController do
     it 'returns http success' do
       get :personal
       expect(response).to be_success
-      expect(response.body).to eq([].extend(EmailsRepresenter).to_json)
+      expect(response.body).to eq(Emails.new([], personal_emails_url).extend(EmailsRepresenter).to_json)
     end
   end
 
@@ -50,7 +50,7 @@ describe EmailsController do
     it 'returns http success' do
       get :issues
       expect(response).to be_success
-      expect(response.body).to eq([Email.new(email_message)].extend(EmailsRepresenter).to_json)
+      expect(response.body).to eq(Emails.new([Email.new(email_message)], issues_emails_url).extend(EmailsRepresenter).to_json)
     end
   end
 
@@ -58,7 +58,7 @@ describe EmailsController do
     it 'returns http success' do
       get :projects
       expect(response).to be_success
-      expect(response.body).to eq([Email.new(email_message)].extend(EmailsRepresenter).to_json)
+      expect(response.body).to eq(Emails.new([Email.new(email_message)], projects_emails_url).extend(EmailsRepresenter).to_json)
     end
   end
 
@@ -66,7 +66,7 @@ describe EmailsController do
     it 'returns http success' do
       get :ucern
       expect(response).to be_success
-      expect(response.body).to eq([Email.new(email_message)].extend(EmailsRepresenter).to_json)
+      expect(response.body).to eq(Emails.new([Email.new(email_message)], ucern_emails_url).extend(EmailsRepresenter).to_json)
     end
   end
 

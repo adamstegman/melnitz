@@ -6,12 +6,6 @@ module EmailsRepresenter
   collection :emails, class: Email, extend: EmailSummaryRepresenter, embedded: true
 
   link :self do
-    @self_url
-  end
-
-  private
-
-  def emails
-    each
+    url
   end
 end

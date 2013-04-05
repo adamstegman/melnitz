@@ -19,25 +19,25 @@ class EmailsController < ApplicationController
   # Public: Renders a summary of all unread emails that do not correspond to other sections.
   def personal
     dashboard = fetch_email_dashboard
-    respond_with dashboard.personal
+    respond_with Emails.new(dashboard.personal, personal_emails_url)
   end
 
   # Public: Renders a summary of all unread emails about JIRA issues.
   def issues
     dashboard = fetch_email_dashboard
-    respond_with dashboard.issues
+    respond_with Emails.new(dashboard.issues, issues_emails_url)
   end
 
   # Public: Renders a summary of all unread emails about projects.
   def projects
     dashboard = fetch_email_dashboard
-    respond_with dashboard.projects
+    respond_with Emails.new(dashboard.projects, projects_emails_url)
   end
 
   # Public: Renders a summary of all unread emails from uCern.
   def ucern
     dashboard = fetch_email_dashboard
-    respond_with dashboard.ucern
+    respond_with Emails.new(dashboard.ucern, ucern_emails_url)
   end
 
   # Public: Renders the details of the requested email. The ID is the Exchange ID of the email.
@@ -55,3 +55,6 @@ class EmailsController < ApplicationController
     Dashboard.new(emails)
   end
 end
+
+# Internal: Holds a collection of Email objects and the URL at which they were retrieved.
+Emails = Struct.new(:emails, :url)
