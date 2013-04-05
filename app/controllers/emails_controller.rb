@@ -36,5 +36,8 @@ class EmailsController < ApplicationController
 
   # Public: Renders the details of the requested email. The ID is the Exchange ID of the email.
   def show
+    email_message = Rails.application.exchange_client.fetch_email_details(params[:id])
+    email = Email.new(email_message)
+    respond_with email
   end
 end
