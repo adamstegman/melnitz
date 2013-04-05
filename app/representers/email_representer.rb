@@ -18,6 +18,6 @@ module EmailRepresenter
   property :to_display
 
   link :self do
-    email_url(self.id)
+    email_url(self.url_escaped_id)
   end
 end

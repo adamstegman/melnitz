@@ -7,6 +7,11 @@ Email = Struct.new(:email_message) do
     email_message.id.to_s
   end
 
+  # Public: Returns the URL-escaped #id.
+  def url_escaped_id
+    CGI.escape(id)
+  end
+
   # Public: Returns an Array of String email addresses blind carbon-copied on this email.
   def bcc
     email_message.bcc_recipients.map(&:to_s)

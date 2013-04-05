@@ -19,6 +19,14 @@ describe Email do
     end
   end
 
+  describe '#url_escaped_id' do
+    it 'returns the URL-escaped ItemId of the email message' do
+      # EmailMessage has no #setId method so have to stub it
+      email_message.stub(:id).and_return(ItemId.new('abc/123 this'))
+      expect(email.url_escaped_id).to eq('abc%2F123+this')
+    end
+  end
+
   describe '#bcc' do
     it 'returns the list of email address blind-carbon-copied on the email message' do
       # can't construct an EmailAddressCollection, so have to mock it
