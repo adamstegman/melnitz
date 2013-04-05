@@ -1,0 +1,6 @@
+host: email.cerner.com
+mailbox: as016194@Cerner.com
+version: 2010_sp1
+domain: WHQ_NT_DOMAIN
+user: as016194
+password: password
