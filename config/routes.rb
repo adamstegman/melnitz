@@ -14,5 +14,8 @@ Melnitz::Application.routes.draw do
       get :projects
       get :ucern
     end
+    member do
+      get :body
+    end
   end
 end

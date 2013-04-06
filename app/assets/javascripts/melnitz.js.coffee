@@ -21,15 +21,17 @@ class Melnitz.Email extends Backbone.Model
   url: =>
     @urlRoot + "/" + encodeURIComponent(this.get("id"))
   isHTML: =>
-    this.get("bodyType") == "HTML"
+    this.get("body_type") == "HTML"
   htmlBodyURL: =>
     this.url() + "/body"
-  escapeId: (emailId) ->
-    emailId.replace(/[^\w-]/g, "\\$&")
-  unescapeId: (emailId) ->
-    emailId.replace(/\\(.)/g, "$1")
+Melnitz.Email.escapeId = (emailId) ->
+  emailId.replace(/[^\w-]/g, "\\$&")
+Melnitz.Email.unescapeId = (emailId) ->
+  emailId.replace(/\\(.)/g, "$1")
 
 # Internal: A single email display. Can be contained in any of the sections.
+#
+# TODO: linkify text body
 class Melnitz.EmailView extends Backbone.View
   tagName: "article"
   className: "email"
@@ -47,11 +49,11 @@ class Melnitz.EmailView extends Backbone.View
       {{#if body}}
       <dt>Body</dt>
         {{#if isHTML}}
-      <dd>
-        <iframe src="{{{htmlBodyURL}}}" seamless sandbox></iframe>
-      </dd>
+        <dd>
+          <iframe src="{{{htmlBodyURL}}}" seamless sandbox></iframe>
+        </dd>
         {{else}}
-      <dd>{{body}}</dd>
+        <dd><pre>{{body}}</pre></dd>
         {{/if}}
       {{/if}}
     </dl>
@@ -77,7 +79,7 @@ class Melnitz.EmailView extends Backbone.View
 class Melnitz.Emails extends Backbone.Collection
   model: Melnitz.Email
   parse: (resp) =>
-    if resp then JSON.parse(resp).emails else undefined
+    resp?._embedded.emails
   fetch: (options) =>
     superOptions = _.defaults(options ? {},
       beforeSend: @preFetch
@@ -179,6 +181,9 @@ class Melnitz.EmailSections extends Backbone.Model
     issues: []
     projects: []
     ucern: []
+
+  parse: (resp) =>
+    resp?._embedded
 
   url: =>
     "/emails"

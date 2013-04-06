@@ -47,6 +47,13 @@ class EmailsController < ApplicationController
     respond_with email
   end
 
+  # Public: Renders the HTML body of the requested email. The ID is the Exchange ID of the email.
+  def body
+    email_message = Rails.application.exchange_client.fetch_email_details(params[:id])
+    email = Email.new(email_message)
+    render text: email.body, content_type: 'text/html'
+  end
+
   private
 
   def fetch_email_dashboard
