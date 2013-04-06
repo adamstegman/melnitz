@@ -59,7 +59,7 @@ class Melnitz.EmailView extends Backbone.View
     </dl>
     """)
 
-  initialize: (args) ->
+  initialize: (args) =>
     @model = args?.model
     if @model
       this.listenTo(@model, "change", @render)
@@ -79,7 +79,7 @@ class Melnitz.EmailView extends Backbone.View
 class Melnitz.Emails extends Backbone.Collection
   model: Melnitz.Email
   parse: (resp) =>
-    resp?._embedded.emails
+    resp?._embedded?.emails
   fetch: (options) =>
     superOptions = _.defaults(options ? {},
       beforeSend: @preFetch
@@ -109,11 +109,9 @@ class Melnitz.EmailsView extends Backbone.View
   events:
     "click .email": "expandEmail"
 
-  initialize: (options) ->
+  initialize: (options) =>
     if options.el
       @el = options.el
-    else if $(".melnitz-body").length > 0
-      @el = $(".melnitz-body").get(0)
     else
       @$el.appendTo("body")
     if options.selectedEmailId
@@ -145,7 +143,7 @@ class Melnitz.EmailsView extends Backbone.View
 # Public: The Melnitz section containing personal emails as defined in the README.
 class Melnitz.Personal extends Melnitz.EmailsView
   header: "Personal Conversations"
-  initialize: ->
+  initialize: =>
     @collection = new Melnitz.Emails
     @collection.url = "/emails/personal"
     super
@@ -153,7 +151,7 @@ class Melnitz.Personal extends Melnitz.EmailsView
 # Public: The Melnitz section containing issue-related emails as defined in the README.
 class Melnitz.Issues extends Melnitz.EmailsView
   header: "Issues and Code Reviews"
-  initialize: ->
+  initialize: =>
     @collection = new Melnitz.Emails
     @collection.url = "/emails/issues"
     super
@@ -161,7 +159,7 @@ class Melnitz.Issues extends Melnitz.EmailsView
 # Public: The Melnitz section containing project-related emails as defined in the README.
 class Melnitz.Projects extends Melnitz.EmailsView
   header: "Project Updates"
-  initialize: ->
+  initialize: =>
     @collection = new Melnitz.Emails
     @collection.url = "/emails/projects"
     super
@@ -169,7 +167,7 @@ class Melnitz.Projects extends Melnitz.EmailsView
 # Public: The Melnitz section containing uCern-related emails as defined in the README.
 class Melnitz.UCern extends Melnitz.EmailsView
   header: "uCern and Wiki Updates"
-  initialize: ->
+  initialize: =>
     @collection = new Melnitz.Emails
     @collection.url = "/emails/ucern"
     super
@@ -190,7 +188,7 @@ class Melnitz.EmailSections extends Backbone.Model
 
 # Public: The main dashboard. It renders each section.
 class Melnitz.Dashboard extends Backbone.View
-  tagName: "div"
+  tagName: "section"
   className: "melnitz-body"
   # TODO: pre-compile templates
   template: Handlebars.compile("""
@@ -200,12 +198,10 @@ class Melnitz.Dashboard extends Backbone.View
     <section class="ucern-body"></section>
     """)
 
-  initialize: (options) ->
+  initialize: (options) =>
     @model = new Melnitz.EmailSections
     if options.el
       @el = options.el
-    else if $(".melnitz-body").length > 0
-      @el = $(".melnitz-body").get(0)
     else
       @$el.appendTo("body")
     if options.selectedEmailId
@@ -244,10 +240,8 @@ class Melnitz.Router extends Backbone.Router
     $(".top-bar-nav-link").removeClass("active")
     $(".top-bar-" + routeName).addClass("active")
 
-  renderViewWithSelectedEmail: (viewClass, emailId, options) ->
-    options ||= {}
-    options.selectedEmailId = emailId
-    view = new viewClass(options)
+  renderViewWithSelectedEmail: (viewClass, emailId) ->
+    view = new viewClass({selectedEmailId: emailId})
     view.render()
     view.collection.fetch({update: true})
 
@@ -277,6 +271,7 @@ class Melnitz.Router extends Backbone.Router
 # Internal: Handles clicks on navigation links by delegating to the router.
 Melnitz.navigate = (event) ->
   event.preventDefault()
+  $('.melnitz-body').remove()
   Melnitz.router.navigate($(event.target).attr("href"), {trigger: true})
 
 Melnitz.router = new Melnitz.Router
