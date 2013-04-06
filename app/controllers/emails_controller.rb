@@ -42,24 +42,29 @@ class EmailsController < ApplicationController
 
   # Public: Renders the details of the requested email. The ID is the Exchange ID of the email.
   def show
-    email_message = Rails.application.exchange_client.fetch_email_details(params[:id])
-    email = Email.new(email_message)
-    respond_with email
+    respond_with fetch_email(params[:id])
   end
 
   # Public: Renders the HTML body of the requested email. The ID is the Exchange ID of the email.
   def body
-    email_message = Rails.application.exchange_client.fetch_email_details(params[:id])
-    email = Email.new(email_message)
-    render text: email.body, content_type: 'text/html'
+    render text: fetch_email(params[:id]).body, content_type: 'text/html'
   end
 
   private
 
   def fetch_email_dashboard
-    email_messages = Rails.application.exchange_client.fetch_all_unread_emails
+    email_messages = exchange_client.fetch_all_unread_emails
     emails = email_messages.map(&Email.method(:new))
     Dashboard.new(emails)
+  end
+
+  def fetch_email(id)
+    email_message = exchange_client.fetch_email_details(id)
+    Email.new(email_message)
+  end
+
+  def exchange_client
+    Rails.application.exchange_client
   end
 end
 
