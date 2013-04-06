@@ -14,6 +14,7 @@ group :assets do
   gem 'sass-rails'
   gem 'therubyrhino'
   gem 'uglifier'
+  gem 'zurb-foundation'
 end
 
 group :development, :test do

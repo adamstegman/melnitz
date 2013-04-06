@@ -1,34 +1,49 @@
 !!! 5
-%html
-  %head
-    %title Melnitz
-    = stylesheet_link_tag    'application', media: 'all'
-    = javascript_include_tag 'application'
-    = csrf_meta_tags
-  %body
-    %nav.top-bar
-      %ul.title-area
-        %li.name
-          %h1
-            = link_to 'Melnitz', root_path, class: 'nav-link dashboard'
-        %li.toggle-topbar.menu-icon
-          %a{href: '#'}
-            %span Menu
+/ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
+/[if lt IE 7 ] <html class=\"ie6\" lang=\"en\">
+/[if IE 7 ]    <html class=\"ie7\" lang=\"en\">
+/[if IE 8 ]    <html class=\"ie8\" lang=\"en\">
+/[if IE 9 ]    <html class=\"ie9\" lang=\"en\">
+/[if (gt IE 9)|!(IE)] <!--> <html lang=\"en\">
 
-      %section.top-bar-section
-        %ul.left
-          %li.divider
-          %li.top-bar-nav-link.top-bar-personal{class: active_class_name('personal')}
-            = link_to 'Personal', personal_path, class: 'nav-link personal'
-          %li.divider
-          %li.top-bar-nav-link.top-bar-issues{class: active_class_name('issues')}
-            = link_to 'Issues', issues_path, class: 'nav-link issues'
-          %li.divider
-          %li.top-bar-nav-link.top-bar-projects{class: active_class_name('projects')}
-            = link_to 'Projects', projects_path, class: 'nav-link projects'
-          %li.divider
-          %li.top-bar-nav-link.top-bar-ucern{class: active_class_name('ucern')}
-            = link_to 'uCern', ucern_path, class: 'nav-link ucern'
-          %li.divider
+%head
+  %meta{ :charset => "utf-8" }
 
-    = yield
+  -# Set the viewport width to device width for mobile
+  %meta{ :name => "viewport", :content => "width=device-width, initial-scale=1.0" }
+
+  %title Melnitz
+
+  = stylesheet_link_tag 'application'
+  = javascript_include_tag 'vendor/custom.modernizr'
+  = csrf_meta_tag
+
+%body
+  %nav.top-bar
+    %ul.title-area
+      %li.name
+        %h1
+          = link_to 'Melnitz', root_path, class: 'nav-link dashboard'
+      %li.toggle-topbar.menu-icon
+        %a{href: '#'}
+          %span Menu
+
+    %section.top-bar-section
+      %ul.left
+        %li.divider
+        %li.top-bar-nav-link.top-bar-personal{class: active_class_name('personal')}
+          = link_to 'Personal', personal_path, class: 'nav-link personal'
+        %li.divider
+        %li.top-bar-nav-link.top-bar-issues{class: active_class_name('issues')}
+          = link_to 'Issues', issues_path, class: 'nav-link issues'
+        %li.divider
+        %li.top-bar-nav-link.top-bar-projects{class: active_class_name('projects')}
+          = link_to 'Projects', projects_path, class: 'nav-link projects'
+        %li.divider
+        %li.top-bar-nav-link.top-bar-ucern{class: active_class_name('ucern')}
+          = link_to 'uCern', ucern_path, class: 'nav-link ucern'
+        %li.divider
+
+  = yield
+
+  = javascript_include_tag "application"
