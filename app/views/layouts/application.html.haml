@@ -1,0 +1,34 @@
+!!! 5
+%html
+  %head
+    %title Melnitz
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
+    = csrf_meta_tags
+  %body
+    %nav.top-bar
+      %ul.title-area
+        %li.name
+          %h1
+            = link_to 'Melnitz', root_path, class: 'nav-link dashboard'
+        %li.toggle-topbar.menu-icon
+          %a{href: '#'}
+            %span Menu
+
+      %section.top-bar-section
+        %ul.left
+          %li.divider
+          %li.top-bar-nav-link.top-bar-personal{class: active_class_name('personal')}
+            = link_to 'Personal', personal_path, class: 'nav-link personal'
+          %li.divider
+          %li.top-bar-nav-link.top-bar-issues{class: active_class_name('issues')}
+            = link_to 'Issues', issues_path, class: 'nav-link issues'
+          %li.divider
+          %li.top-bar-nav-link.top-bar-projects{class: active_class_name('projects')}
+            = link_to 'Projects', projects_path, class: 'nav-link projects'
+          %li.divider
+          %li.top-bar-nav-link.top-bar-ucern{class: active_class_name('ucern')}
+            = link_to 'uCern', ucern_path, class: 'nav-link ucern'
+          %li.divider
+
+    = yield

@@ -58,9 +58,9 @@ class Melnitz.EmailView extends Backbone.View
     """)
 
   initialize: (args) ->
-    @model = args ? args.model : null;
+    @model = args?.model
     if @model
-      this.listenTo(@model, "change", @render);
+      this.listenTo(@model, "change", @render)
 
   presenter: =>
     _.extend(_.clone(@model.attributes),
@@ -69,7 +69,7 @@ class Melnitz.EmailView extends Backbone.View
     )
 
   render: =>
-    $(@el).html(this.template(this.presenter()));
+    $(@el).html(this.template(this.presenter()))
 
 # Internal: A collection of unread Email objects.
 #
@@ -82,7 +82,7 @@ class Melnitz.Emails extends Backbone.Collection
     superOptions = _.defaults(options ? {},
       beforeSend: @preFetch
       complete: @postFetch)
-    Backbone.Collection.prototype.fetch.apply(this, [superOptions]);
+    super(superOptions)
   postFetch: (jqXHR, status) =>
     # TODO: add activity indicator
     jqXHR
@@ -133,7 +133,7 @@ class Melnitz.EmailsView extends Backbone.View
 
   render: =>
     # @$el.html() does not work
-    $(@el).html(this.template(this.presenter()));
+    $(@el).html(this.template(this.presenter()))
     _.each(@collection.models, (email) =>
       $(@el).find("[data-email-id='" + Melnitz.Email.escapeId(email.get("id")) + "']").each((index, el) ->
         emailView = new Melnitz.EmailView({model: email})
@@ -212,7 +212,7 @@ class Melnitz.Dashboard extends Backbone.View
     # Only need to #render these once, they will each listen for updates after that
     unless this.sections
       # @$el.html() does not work
-      $(@el).html(this.template());
+      $(@el).html(this.template())
       options = {selectedEmailId: @selectedEmailId}
       @sections = {}
       @sections.personal = new Melnitz.Personal(_.extend(options, {el: $(".personal-body").get(0)}))
@@ -245,16 +245,12 @@ class Melnitz.Router extends Backbone.Router
     view = new viewClass(options)
     view.render()
     view.collection.fetch({update: true})
-  },
 
   dashboard: (emailId) =>
     this.activateTopBarItem("dashboard")
-    options ||= {}
-    options.selectedEmailId = emailId
-    dashboard = new Melnitz.Dashboard(options)
+    dashboard = new Melnitz.Dashboard({selectedEmailId: emailId})
     dashboard.render()
     dashboard.model.fetch()
-  },
 
   personal: (emailId) =>
     # OPTIMIZE: when coming from dashboard, use the existing personal view instead of creating a new one
