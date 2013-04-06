@@ -148,7 +148,7 @@ class Melnitz.Personal extends Melnitz.EmailsView
   initialize: ->
     @collection = new Melnitz.Emails
     @collection.url = "/emails/personal"
-    super(arguments)
+    super
 
 # Public: The Melnitz section containing issue-related emails as defined in the README.
 class Melnitz.Issues extends Melnitz.EmailsView
@@ -156,7 +156,7 @@ class Melnitz.Issues extends Melnitz.EmailsView
   initialize: ->
     @collection = new Melnitz.Emails
     @collection.url = "/emails/issues"
-    super(arguments)
+    super
 
 # Public: The Melnitz section containing project-related emails as defined in the README.
 class Melnitz.Projects extends Melnitz.EmailsView
@@ -164,7 +164,7 @@ class Melnitz.Projects extends Melnitz.EmailsView
   initialize: ->
     @collection = new Melnitz.Emails
     @collection.url = "/emails/projects"
-    super(arguments)
+    super
 
 # Public: The Melnitz section containing uCern-related emails as defined in the README.
 class Melnitz.UCern extends Melnitz.EmailsView
@@ -172,7 +172,7 @@ class Melnitz.UCern extends Melnitz.EmailsView
   initialize: ->
     @collection = new Melnitz.Emails
     @collection.url = "/emails/ucern"
-    super(arguments)
+    super
 
 # Internal: All unread emails, keyed by section.
 class Melnitz.EmailSections extends Backbone.Model
@@ -215,7 +215,7 @@ class Melnitz.Dashboard extends Backbone.View
 
   render: =>
     # Only need to #render these once, they will each listen for updates after that
-    unless this.sections
+    unless @sections
       # @$el.html() does not work
       $(@el).html(this.template())
       options = {selectedEmailId: @selectedEmailId}
