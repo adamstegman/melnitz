@@ -22,10 +22,14 @@ class Dashboard
   # Internal: Matches project identifiers, e.g. `[provider_portal]`.
   #
   # TODO: needs to be better, will also match [Crucible]
-  PROJECT_SUBJECT = /^.+\[[\w-]+\]/
+  PROJECT_SUBJECT = /\A.+\[[\w-]+\]/
 
-  # Internal: Matches uCern subject lines, e.g. `[Population Health App Infra] - ` or `[uCern Wiki] `.
-  UCERN_SUBJECT = /^(\[[^\]]+\] - |\[uCern Wiki\] )/
+  # Internal: Matches uCern subject lines.
+  UCERN_SUBJECT = /\A(
+    \[[^\]]+\]\ -\ |                           # opens with group name and a hyphen, or
+    \[uCern\ Wiki\]\ |                         # opens with uCern Wiki, or
+    \[[^\]]+\].*\(Document\ added\/updated\)\z # opens with group name and ends with uCern document modification indicator
+  )/x
 
   # Public: Constructs a dashboard, grouping the given emails by section.
   #

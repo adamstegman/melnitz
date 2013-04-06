@@ -30,12 +30,17 @@ describe Dashboard do
     email_message.subject = '[Population Health App Infra] - some discussion'
     Email.new(email_message)
   }
+  let(:ucern_document_email) {
+    email_message = EmailMessage.new(service)
+    email_message.subject = '[Population Health App Infra] some document (Document added/updated)'
+    Email.new(email_message)
+  }
   let(:ucern_wiki_email) {
     email_message = EmailMessage.new(service)
     email_message.subject = '[uCern Wiki] My Project > Some Page'
     Email.new(email_message)
   }
-  let(:emails) { [crucible_email, jira_email, personal_email, project_ucern_email, ucern_email, ucern_wiki_email] }
+  let(:emails) { [crucible_email, jira_email, personal_email, project_ucern_email, ucern_email, ucern_document_email, ucern_wiki_email] }
   let(:dashboard) { Dashboard.new(emails) }
 
   describe '#personal' do
@@ -58,7 +63,7 @@ describe Dashboard do
 
   describe '#ucern' do
     it 'returns emails that are from or about uCern or uCern Wiki' do
-      expect(dashboard.ucern).to eq([project_ucern_email, ucern_email, ucern_wiki_email])
+      expect(dashboard.ucern).to eq([project_ucern_email, ucern_email, ucern_document_email, ucern_wiki_email])
     end
   end
 end
