@@ -1,0 +1,45 @@
+#= require melnitz
+
+# Internal: A single email display. Can be contained in any of the sections.
+#
+# TODO: linkify text body
+class @Melnitz.EmailView extends Backbone.View
+  tagName: "article"
+  className: "email"
+  template: Handlebars.compile("""
+    <h3 class="subject">{{subject}}</h3>
+    <dl class="attributes">
+      {{#if from}}
+      <dt>From</dt>
+      <dd>{{from}}</dd>
+      {{/if}}
+      {{#if to}}
+      <dt>To</dt>
+      <dd>{{toDisplay}} {{to}}</dd>
+      {{/if}}
+      {{#if body}}
+      <dt>Body</dt>
+        {{#if isHTML}}
+        <dd>
+          <iframe src="{{{htmlBodyURL}}}" seamless sandbox></iframe>
+        </dd>
+        {{else}}
+        <dd><pre>{{body}}</pre></dd>
+        {{/if}}
+      {{/if}}
+    </dl>
+    """)
+
+  initialize: (args) =>
+    @model = args?.model
+    if @model
+      this.listenTo(@model, "change", @render)
+
+  presenter: =>
+    _.extend(_.clone(@model.attributes),
+      htmlBodyURL: @model.htmlBodyURL()
+      isHTML: @model.isHTML()
+    )
+
+  render: =>
+    $(@el).html(this.template(this.presenter()))
