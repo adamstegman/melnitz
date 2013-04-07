@@ -22,10 +22,10 @@ class @Melnitz.EmailView extends Backbone.View
       <dt>Body</dt>
         {{#if isHTML}}
       <dd>
-        <iframe class="email-html-body" seamless sandbox src="{{{htmlBodyURL}}}"></iframe>
+        <iframe class="email-body email-body-html" seamless sandbox src="{{{htmlBodyURL}}}"></iframe>
       </dd>
         {{else}}
-      <dd><pre>{{body}}</pre></dd>
+      <dd><pre class="email-body email-body-text">{{body}}</pre></dd>
         {{/if}}
       {{/if}}
     </dl>
