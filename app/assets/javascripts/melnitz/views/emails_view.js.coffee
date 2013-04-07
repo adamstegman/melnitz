@@ -15,7 +15,7 @@ class @Melnitz.EmailsView extends Backbone.View
     """)
 
   events:
-    "click .email": "expandEmail"
+    "click .email": "toggleEmail"
 
   initialize: (options) =>
     if options.el
@@ -31,9 +31,13 @@ class @Melnitz.EmailsView extends Backbone.View
     this.listenTo(@collection, "reset", @render)
     this.listenTo(@collection, "destroy", @render)
 
-  expandEmail: (event) =>
+  toggleEmail: (event) =>
     emailId = Melnitz.Email.unescapeId($(event.target).closest("[data-email-id]").data("email-id"))
-    @collection.get(emailId).fetch()
+    email = @collection.get(emailId)
+    expanded = !(email.get("expanded"))
+    email.set("expanded", expanded)
+    if expanded
+      email.fetch()
 
   presenter: =>
     emailIds: @collection.pluck("id")

@@ -8,6 +8,7 @@ class @Melnitz.EmailView extends Backbone.View
   className: "email"
   template: Handlebars.compile("""
     <h3 class="subject">{{subject}}</h3>
+    {{#if expanded}}
     <dl class="attributes">
       {{#if from}}
       <dt>From</dt>
@@ -20,14 +21,15 @@ class @Melnitz.EmailView extends Backbone.View
       {{#if body}}
       <dt>Body</dt>
         {{#if isHTML}}
-        <dd>
-          <iframe src="{{{htmlBodyURL}}}" seamless sandbox></iframe>
-        </dd>
+      <dd>
+        <iframe class="email-html-body" seamless sandbox src="{{{htmlBodyURL}}}"></iframe>
+      </dd>
         {{else}}
-        <dd><pre>{{body}}</pre></dd>
+      <dd><pre>{{body}}</pre></dd>
         {{/if}}
       {{/if}}
     </dl>
+    {{/if}}
     """)
 
   initialize: (args) =>
