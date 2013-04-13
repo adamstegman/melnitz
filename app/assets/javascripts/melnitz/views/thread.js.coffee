@@ -26,7 +26,7 @@ class @Melnitz.Thread extends Backbone.View
     @subject = Melnitz.Thread.extractSubject(emails[0])
 
   toggleEmail: (event) =>
-    emailId = Melnitz.Email.unescapeId($(event.target).closest("[data-email-id]").data("email-id"))
+    emailId = HTMLUtil.unescapeAttr($(event.target).closest("[data-email-id]").data("email-id"))
     email = @emails[emailId]
     expanded = !(email.get("expanded"))
     email.set("expanded", expanded)
@@ -34,14 +34,13 @@ class @Melnitz.Thread extends Backbone.View
       email.fetch()
 
   presenter: =>
-    emailIds: _.keys(@emails),
+    emailIds: _.keys(@emails)
     subject: @subject
 
   render: =>
     @$el.html(this.template(this.presenter()))
-    _.each _.keys(@emails), (emailId) =>
-      email = @emails[emailId]
-      @$el.find("[data-email-id='" + Melnitz.Email.escapeId(emailId) + "']").each (index, el) =>
+    _.each @emails, (email) =>
+      @$el.find("[data-email-id='" + email.htmlSafeId() + "']").each (index, el) =>
         emailView = new Melnitz.EmailView({model: email})
         $(el).append(emailView.el)
         emailView.render()

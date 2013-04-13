@@ -1,4 +1,5 @@
 #= require melnitz
+#= require html_util
 
 # Internal: An email message that may or may not contain all of the following attributes. Any attribute may be null,
 # undefined, or blank.
@@ -18,13 +19,9 @@ class @Melnitz.Email extends Backbone.Model
   urlRoot: "/emails"
   url: =>
     @urlRoot + "/" + encodeURIComponent(this.get("id"))
+  htmlSafeId: =>
+    HTMLUtil.escapeAttr(this.get("id"))
   isHTML: =>
     this.get("body_type") == "HTML"
   htmlBodyURL: =>
     this.url() + "/body"
-
-@Melnitz.Email.escapeId = (emailId) ->
-  emailId.replace(/[^\w-]/g, "\\$&")
-
-@Melnitz.Email.unescapeId = (emailId) ->
-  emailId.replace(/\\(.)/g, "$1")
