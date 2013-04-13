@@ -17,6 +17,10 @@ group :assets do
   gem 'zurb-foundation'
 end
 
+group :development do
+  gem 'kss-rails'
+end
+
 group :development, :test do
   gem 'teabag'
   gem 'rspec-rails'

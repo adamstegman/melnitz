@@ -18,4 +18,6 @@ Melnitz::Application.routes.draw do
       get :body
     end
   end
+
+  mount Kss::Engine => '/styles' if Rails.env.development?
 end

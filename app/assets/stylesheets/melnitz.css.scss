@@ -1,54 +1,111 @@
-.threads-list, .emails-list {
+$backgroundHighlight: #efefef;
+$foregroundHighlight: #ddd;
+
+// A collection of email messages, grouped together by some characteristic.
+//
+// Styleguide 1.
+.threads-list {
+  /* Get rid of those list indicators, they don't help the user. */
   list-style-type: none;
-}
 
-.email-list-item {
-  &.email-collapsed {
-    .attributes {
-      display: none;
+  // A container for an email thread, managed by the email collection.
+  //
+  // Styleguide 1.1.
+  .thread-list-item {
+    // A collapsed thread, which shows only the subject of the thread.
+    //
+    // :hover - highlights the thread to indicate which one will be selected if clicked.
+    //
+    // Styleguide 1.1.1.
+    &.thread-collapsed {
+      &:hover {
+        background-color: $foregroundHighlight;
+      }
+
+      .emails-list {
+        display: none;
+      }
+    }
+
+    // An expanded thread, which shows each email message in the thread.
+    //
+    // :hover - lightens the expanded thread so you can see which email is selected.
+    //
+    // Styleguide 1.1.2.
+    &.thread-expanded {
+      &:hover {
+        background-color: $backgroundHighlight;
+      }
+
+      .emails-list {
+        display: block;
+      }
     }
   }
-  &.email-expanded {
-    .attributes {
-      display: block;
+}
+
+// A thread of related email messages, presented to summarize the included messages so they can be dealt with faster.
+//
+// Styleguide 2.
+.thread {
+  // The thread header which the user can click to expand or collapse the thread.
+  //
+  // Styleguide 2.1.
+  .thread-toggle {
+    cursor: pointer;
+  }
+
+  // The list of email messages in a thread.
+  //
+  // Styleguide 2.2.
+  .emails-list {
+    /* Get rid of those list indicators, they don't help the user. */
+    list-style-type: none;
+
+    // A container for an email message, managed by the thread.
+    //
+    // :hover - highlights the email to indicate which one will be selected if clicked.
+    // .email-collapsed - shows only the subject of the email.
+    // .email-expanded  - shows all attributes of the email.
+    //
+    // Styleguide 2.2.1.
+    .email-list-item {
+      &:hover {
+        background-color: $foregroundHighlight;
+      }
+      &.email-collapsed {
+        .attributes {
+          display: none;
+        }
+      }
+      &.email-expanded {
+        .attributes {
+          display: block;
+        }
+      }
     }
   }
 }
 
-.thread-list-item {
-  &.thread-collapsed {
-    .emails-list {
-      display: none;
-    }
+// An email message.
+//
+// Styleguide 3.
+.email {
+  // The email header which the user can click to expand or collapse the email.
+  //
+  // Styleguide 3.1.
+  .email-toggle {
+    cursor: pointer;
   }
 
-  &.thread-expanded {
-    .emails-list {
-      display: block;
-    }
+  // The email message body, containing either text in a <pre> or HTML in an <iframe>.
+  //
+  // Styleguide 3.2.
+  .email-body {
+    border: 1px solid #000;
+    height: 30em;
+    margin: 0 5%;
+    overflow: scroll;
+    width: 90%;
   }
-}
-
-.thread-collapsed, .email {
-  &:hover {
-    background-color: #ddd;
-  }
-}
-
-.thread-expanded {
-  &:hover {
-    background-color: #efefef;
-  }
-}
-
-.thread-toggle, .email-toggle {
-  cursor: pointer;
-}
-
-.email-body {
-  border: 1px solid #000;
-  height: 30em;
-  margin: 0 5%;
-  overflow: scroll;
-  width: 90%;
 }

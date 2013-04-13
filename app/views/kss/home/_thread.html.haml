@@ -1,0 +1,36 @@
+-# see Melnitz.Thread
+
+~ styleguide_block '2' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %ol.emails-list
+      %li.email-list-item
+        %article.email
+          %h4.subject.email-subject.email-toggle Email subject
+
+~ styleguide_block '2.1' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+
+~ styleguide_block '2.2' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %ol.emails-list
+      %li.email-list-item
+        %article.email
+          %h4.subject.email-subject.email-toggle Email subject
+
+~ styleguide_block '2.2.1' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %ol.emails-list
+      %li.email-list-item{class: '$modifier_class'}
+        %article.email
+          %h4.subject.email-subject.email-toggle Email subject
+          %dl.attributes
+            %dt From
+            %dd sender@example.com
+            %dt To
+            %dd recipient@example.com
+            %dt Body
+            %dd some body

@@ -1,0 +1,24 @@
+-# see Melnitz.EmailView
+
+~ styleguide_block '3' do
+  %article.email
+    %h4.subject.email-subject.email-toggle Email subject
+    %dl.attributes
+      %dt From
+      %dd sender@example.com
+      %dt To
+      %dd recipient@example.com
+      %dt Body
+      %dd some body
+
+~ styleguide_block '3.1' do
+  %article.email
+    %h4.subject.email-subject.email-toggle Email subject
+
+~ styleguide_block '3.2' do
+  %article.email
+    %h4.subject.email-subject.email-toggle Email subject
+    %dl.attributes
+      %dt Body
+      %dd
+        %pre.email-body.email-body-text some body

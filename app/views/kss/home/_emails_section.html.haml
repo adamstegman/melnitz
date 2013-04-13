@@ -1,0 +1,38 @@
+-# see Melnitz.EmailsView
+
+~ styleguide_block '1' do
+  %section.melnitz-body
+    %h2 Emails Section
+    %ol.threads-list
+      %li.thread-list-item
+        %section.thread
+          %h3.subject.thread-subject.thread-toggle Thread subject
+
+~ styleguide_block '1.1' do
+  %section.melnitz-body
+    %ol.threads-list
+      %li.thread-list-item
+        %section.thread
+          %h3.subject.thread-subject.thread-toggle Thread subject
+
+~ styleguide_block '1.1.1' do
+  %section.melnitz-body
+    %ol.threads-list
+      %li.thread-list-item.thread-collapsed{class: '$modifier_class'}
+        %section.thread
+          %h3.subject.thread-subject.thread-toggle Thread subject
+          %ol.emails-list
+            %li.email-list-item
+              %article.email
+                %h4.subject.email-subject.email-toggle Email subject
+
+~ styleguide_block '1.1.2' do
+  %section.melnitz-body
+    %ol.threads-list
+      %li.thread-list-item.thread-expanded{class: '$modifier_class'}
+        %section.thread
+          %h3.subject.thread-subject.thread-toggle Thread subject
+          %ol.emails-list
+            %li.email-list-item
+              %article.email
+                %h4.subject.email-subject.email-toggle Email subject
