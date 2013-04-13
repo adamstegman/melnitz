@@ -3,11 +3,19 @@
 [Working title][melnitz].
 Sorts the mail and presents it in a dashboard so you can act on it instead of trying to figure out threads on your own.
 
+TODO: remove myself from SEMANTIC bugs I don't care about (have not commented on and am not assigned to)
+
+TODO: group emails in threads and summarize the thread
+
 TODO: EWS API 2.0: http://msdn.microsoft.com/en-us/library/exchange/dd633709(v=exchg.80).aspx
 
 TODO: use Crucible/JIRA API to prioritize JIRA/reviews I am assigned to, then JIRA/reviews I have commented on.
 
 TODO: find "edited" comments and update the original with the new content
+
+TODO: thread deletion
+
+TODO: calendar events
 
 ## Usage
 

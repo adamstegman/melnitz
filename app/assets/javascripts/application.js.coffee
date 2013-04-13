@@ -12,10 +12,6 @@
 #
 #= require jquery
 #= require foundation
-#= require underscore
-#= require json2
-#= require backbone
-#= require handlebars
 #= require_tree .
 
 $(document).foundation();

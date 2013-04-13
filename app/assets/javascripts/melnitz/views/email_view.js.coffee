@@ -7,7 +7,7 @@ class @Melnitz.EmailView extends Backbone.View
   tagName: "article"
   className: "email"
   template: Handlebars.compile("""
-    <h3 class="subject">{{subject}}</h3>
+    <h4 class="subject">{{subject}}</h3>
     {{#if expanded}}
     <dl class="attributes">
       {{#if from}}

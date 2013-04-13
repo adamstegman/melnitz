@@ -22,7 +22,9 @@ class @Melnitz.Email extends Backbone.Model
     this.get("body_type") == "HTML"
   htmlBodyURL: =>
     this.url() + "/body"
+
 @Melnitz.Email.escapeId = (emailId) ->
   emailId.replace(/[^\w-]/g, "\\$&")
+
 @Melnitz.Email.unescapeId = (emailId) ->
   emailId.replace(/\\(.)/g, "$1")

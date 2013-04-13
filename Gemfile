@@ -18,5 +18,6 @@ group :assets do
 end
 
 group :development, :test do
+  gem 'teabag'
   gem 'rspec-rails'
 end

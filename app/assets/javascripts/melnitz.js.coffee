@@ -1,3 +1,9 @@
+#= require jquery
+#= require underscore
+#= require json2
+#= require backbone
+#= require handlebars
+
 # Public: An email dashboard. It renders several sections that organize email in a more approachable and actionable
 # way.
 @Melnitz = {}

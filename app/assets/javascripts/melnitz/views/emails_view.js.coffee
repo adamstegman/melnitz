@@ -5,49 +5,50 @@ class @Melnitz.EmailsView extends Backbone.View
   tagName: "section"
   className: "melnitz-body"
   # TODO: pre-compile templates
-  template: Handlebars.compile("""
+  template: Handlebars.compile """
     <h2>{{header}}</h2>
-    <ol class="emails-list">
-      {{#each emailIds}}
-      <li class="email-list-item" data-email-id="{{this}}"></li>
+    <ol class="threads-list">
+      {{#each threads}}
+      <li class="thread-list-item"></li>
       {{/each}}
     </ol>
-    """)
-
-  events:
-    "click .email": "toggleEmail"
+    """
 
   initialize: (options) =>
     if options.el
       @el = options.el
     else
       @$el.appendTo("body")
-    if options.selectedEmailId
-      @selectedEmail = @collection.get(options.selectedEmailId)
+    # TODO: maintain expanded threads and expanded emails in query/hash parameters
+    @threads = {}
 
-    # TODO: is this efficient? it replaces everything when adding/removing an email
-    this.listenTo(@collection, "add", @render)
-    this.listenTo(@collection, "remove", @render)
-    this.listenTo(@collection, "reset", @render)
-    this.listenTo(@collection, "destroy", @render)
+    this.listenTo(@collection, "add", @updateThreads)
+    this.listenTo(@collection, "remove", @updateThreads)
+    this.listenTo(@collection, "reset", @updateThreads)
+    this.listenTo(@collection, "destroy", @updateThreads)
 
-  toggleEmail: (event) =>
-    emailId = Melnitz.Email.unescapeId($(event.target).closest("[data-email-id]").data("email-id"))
-    email = @collection.get(emailId)
-    expanded = !(email.get("expanded"))
-    email.set("expanded", expanded)
-    if expanded
-      email.fetch()
+  updateThreads: =>
+    # FIXME: need a way to only see the added/removed emails, want to simply add/remove emails from threads without doing all this iteration
+    # FIXME: this does not remove, only adds/updates
+    # TODO: I feel like a Threads collection should handle this logic and this just renders it
+    _.each @collection.models, (email) =>
+      emailSubject = Melnitz.Thread.extractSubject(email)
+      if @threads[emailSubject]
+        @threads[emailSubject].addEmail(email)
+      else
+        @threads[emailSubject] = new Melnitz.Thread({emails: [email]})
+    # TODO: is this efficient? it replaces everything when adding/removing emails
+    #       may want to have a separate function that updates the rendering rather than replacing it
+    this.render()
 
   presenter: =>
-    emailIds: @collection.pluck("id")
     header: @header
+    threads: @threads
 
   render: =>
     # @$el.html() does not work
     $(@el).html(this.template(this.presenter()))
-    _.each(@collection.models, (email) =>
-      $(@el).find("[data-email-id='" + Melnitz.Email.escapeId(email.get("id")) + "']").each((index, el) ->
-        emailView = new Melnitz.EmailView({model: email})
-        $(el).append(emailView.el)
-        emailView.render()))
+    threadListItems = $(@el).find('.thread-list-item')
+    _.each _.values(@threads), (thread, i) =>
+      $(threadListItems[i]).append(thread.el)
+      thread.render()
