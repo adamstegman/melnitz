@@ -65,6 +65,10 @@ describe "Melnitz.Thread", ->
       subject = Melnitz.Thread.extractSubject(new Melnitz.Email({subject: "FW: RE: words some words  repeated words words"}))
       expect(subject).toBe("words some words  repeated words words")
 
+    it "removes a prepended 'Canceled:' from the subject", ->
+      subject = Melnitz.Thread.extractSubject(new Melnitz.Email({subject: "Canceled: some event"}))
+      expect(subject).toBe("some event")
+
 buildEmail = (attributes = {}) ->
   attributes.id ?= "abc123"
   attributes.subject ?= "a subject"

@@ -17,6 +17,8 @@ TODO: thread deletion
 
 TODO: calendar events
 
+TODO: different sorting options
+
 ## Usage
 
 TODO: configuration

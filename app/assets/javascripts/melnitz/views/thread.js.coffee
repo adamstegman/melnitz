@@ -64,5 +64,4 @@ class @Melnitz.Thread extends Backbone.View
 
 @Melnitz.Thread.extractSubject = (email) ->
   # TODO: more advanced, e.g. ignoring parentheticals?
-  #       "Canceled: " prefix
-  email?.get("subject")?.replace(/(fw|re):{1,}\s*/gi, "").trim()
+  email?.get("subject")?.replace(/(^canceled|fw|re):{1,}\s*/gi, "").trim()
