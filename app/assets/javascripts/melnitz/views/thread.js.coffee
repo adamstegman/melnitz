@@ -28,6 +28,7 @@ class @Melnitz.Thread extends Backbone.View
       this.addEmail(email)
     @subject = Melnitz.Thread.extractSubject(emails[0])
     @htmlSafeSubject = HTMLUtil.escapeAttr(@subject)
+    # TODO: @summary
 
   toggleEmail: (event) =>
     emailId = HTMLUtil.unescapeAttr($(event.target).closest("[data-email-id]").data("email-id"))
