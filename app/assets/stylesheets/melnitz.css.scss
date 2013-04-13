@@ -2,6 +2,33 @@
   list-style-type: none;
 }
 
+.email-list-item {
+  &.email-collapsed {
+    .attributes {
+      display: none;
+    }
+  }
+  &.email-expanded {
+    .attributes {
+      display: block;
+    }
+  }
+}
+
+.thread-list-item {
+  &.thread-collapsed {
+    .emails-list {
+      display: none;
+    }
+  }
+
+  &.thread-expanded {
+    .emails-list {
+      display: block;
+    }
+  }
+}
+
 .thread-collapsed, .email {
   &:hover {
     background-color: #ddd;

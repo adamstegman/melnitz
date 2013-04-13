@@ -7,8 +7,7 @@ class @Melnitz.EmailView extends Backbone.View
   tagName: "article"
   className: "email"
   template: Handlebars.compile("""
-    <h4 class="subject email-subject email-toggle">{{subject}}</h3>
-    {{#if expanded}}
+    <h4 class="subject email-subject email-toggle">{{subject}}</h4>
     <dl class="attributes">
       {{#if from}}
       <dt>From</dt>
@@ -29,7 +28,6 @@ class @Melnitz.EmailView extends Backbone.View
         {{/if}}
       {{/if}}
     </dl>
-    {{/if}}
     """)
 
   initialize: (args) =>

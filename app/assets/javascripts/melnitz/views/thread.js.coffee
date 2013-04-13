@@ -8,14 +8,12 @@ class @Melnitz.Thread extends Backbone.View
   className: "thread"
   # TODO: pre-compile templates
   template: Handlebars.compile """
-    <h3 class="subject thread-subject thread-toggle">{{subject}}</h2>
-    {{#if expanded}}
+    <h3 class="subject thread-subject thread-toggle">{{subject}}</h3>
     <ol class="emails-list">
       {{#each emails}}
       <li class="email-list-item {{expandedClassName}}" data-email-id="{{id}}"></li>
       {{/each}}
     </ol>
-    {{/if}}
     """
 
   events:
@@ -31,26 +29,29 @@ class @Melnitz.Thread extends Backbone.View
     # TODO: @summary
 
   toggleEmail: (event) =>
-    emailId = HTMLUtil.unescapeAttr($(event.target).closest("[data-email-id]").data("email-id"))
+    $emailContainer = $(event.target).closest("[data-email-id]")
+    emailId = HTMLUtil.unescapeAttr($emailContainer.data("email-id"))
     email = @emails[emailId]
+    $emailContainer.removeClass(email.expandedClassName())
     expanded = !(email.get("expanded"))
     email.set("expanded", expanded)
+    $emailContainer.addClass(email.expandedClassName())
     if expanded
       email.fetch()
 
   presenter: =>
     emails: _.values(@emails)
-    expanded: @expanded
     subject: @subject
 
   render: =>
     @$el.html(this.template(this.presenter()))
-    _.each @emails, (email) =>
-      @$el.find("[data-email-id='" + email.htmlSafeId() + "']").each (index, el) =>
-        emailView = new Melnitz.EmailView({model: email})
-        $(el).append(emailView.el)
-        emailView.render()
-      this.delegateEvents()
+    if @expanded
+      _.each @emails, (email) =>
+        @$el.find("[data-email-id='" + email.htmlSafeId() + "']").each (index, el) =>
+          emailView = new Melnitz.EmailView({model: email})
+          $(el).append(emailView.el)
+          emailView.render()
+    this.delegateEvents()
 
   addEmail: (email) =>
     existingEmail = this.includesEmail(email)
