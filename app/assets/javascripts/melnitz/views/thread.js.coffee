@@ -1,5 +1,6 @@
 #= require melnitz
 #= require melnitz/models/email
+#= require html_util
 
 # Internal: A thread of emails, with an actionable summary as well as the details of each message in the thread.
 class @Melnitz.Thread extends Backbone.View
@@ -8,11 +9,13 @@ class @Melnitz.Thread extends Backbone.View
   # TODO: pre-compile templates
   template: Handlebars.compile """
     <h3>{{subject}}</h2>
+    {{#if expanded}}
     <ol class="emails-list">
       {{#each emailIds}}
       <li class="email-list-item" data-email-id="{{this}}"></li>
       {{/each}}
     </ol>
+    {{/if}}
     """
 
   events:
@@ -24,6 +27,7 @@ class @Melnitz.Thread extends Backbone.View
     _.each emails, (email) =>
       this.addEmail(email)
     @subject = Melnitz.Thread.extractSubject(emails[0])
+    @htmlSafeSubject = HTMLUtil.escapeAttr(@subject)
 
   toggleEmail: (event) =>
     emailId = HTMLUtil.unescapeAttr($(event.target).closest("[data-email-id]").data("email-id"))
@@ -35,6 +39,7 @@ class @Melnitz.Thread extends Backbone.View
 
   presenter: =>
     emailIds: _.keys(@emails)
+    expanded: @expanded
     subject: @subject
 
   render: =>

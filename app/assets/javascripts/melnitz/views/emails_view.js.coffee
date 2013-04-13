@@ -9,10 +9,13 @@ class @Melnitz.EmailsView extends Backbone.View
     <h2>{{header}}</h2>
     <ol class="threads-list">
       {{#each threads}}
-      <li class="thread-list-item"></li>
+      <li class="thread-list-item" data-thread-id="{{{htmlSafeSubject}}}"></li>
       {{/each}}
     </ol>
     """
+
+  events:
+    "click .thread": "toggleThread"
 
   initialize: (options) =>
     if options.el
@@ -26,6 +29,12 @@ class @Melnitz.EmailsView extends Backbone.View
     this.listenTo(@collection, "remove", @updateThreads)
     this.listenTo(@collection, "reset", @updateThreads)
     this.listenTo(@collection, "destroy", @updateThreads)
+
+  toggleThread: (event) =>
+    threadId = HTMLUtil.unescapeAttr($(event.target).closest("[data-thread-id]").data("thread-id"))
+    thread = @threads[threadId]
+    thread.expanded = !(thread.expanded)
+    thread.render()
 
   updateThreads: =>
     # FIXME: need a way to only see the added/removed emails, want to simply add/remove emails from threads without doing all this iteration
@@ -43,7 +52,7 @@ class @Melnitz.EmailsView extends Backbone.View
 
   presenter: =>
     header: @header
-    threads: @threads
+    threads: _.values(@threads)
 
   render: =>
     # @$el.html() does not work

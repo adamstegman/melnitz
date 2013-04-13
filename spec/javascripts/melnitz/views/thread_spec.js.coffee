@@ -18,6 +18,14 @@ describe "Melnitz.Thread", ->
     ]})
     expect(thread.subject).toBe("words some words  repeated words words")
 
+  it "maintains an HTML-attribute-safe version of the subject", ->
+    thread = new Melnitz.Thread({emails: [
+      buildEmail({subject: "[Some Group] Re: some discussion"}),
+      buildEmail({subject: "[Some Group] Re: some discussion"}),
+      buildEmail({subject: "[Some Group] some discussion"})
+    ]})
+    expect(thread.htmlSafeSubject).toBe("\\[Some\\ Group\\]\\ some\\ discussion")
+
   describe "#addEmail", ->
     it "adds the email to the thread", ->
       thread = new Melnitz.Thread
