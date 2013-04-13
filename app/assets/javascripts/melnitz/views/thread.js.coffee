@@ -8,7 +8,7 @@ class @Melnitz.Thread extends Backbone.View
   className: "thread"
   # TODO: pre-compile templates
   template: Handlebars.compile """
-    <h3>{{subject}}</h2>
+    <h3 class="subject thread-subject thread-toggle">{{subject}}</h2>
     {{#if expanded}}
     <ol class="emails-list">
       {{#each emailIds}}
@@ -19,7 +19,7 @@ class @Melnitz.Thread extends Backbone.View
     """
 
   events:
-    "click .email": "toggleEmail"
+    "click .email-toggle": "toggleEmail"
 
   initialize: (options) ->
     emails = options?.emails ? []

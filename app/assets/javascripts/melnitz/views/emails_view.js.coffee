@@ -15,7 +15,7 @@ class @Melnitz.EmailsView extends Backbone.View
     """
 
   events:
-    "click .thread": "toggleThread"
+    "click .thread-toggle": "toggleThread"
 
   initialize: (options) =>
     if options.el

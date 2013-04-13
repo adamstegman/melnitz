@@ -7,7 +7,7 @@ class @Melnitz.EmailView extends Backbone.View
   tagName: "article"
   className: "email"
   template: Handlebars.compile("""
-    <h4 class="subject">{{subject}}</h3>
+    <h4 class="subject email-subject email-toggle">{{subject}}</h3>
     {{#if expanded}}
     <dl class="attributes">
       {{#if from}}
@@ -38,10 +38,9 @@ class @Melnitz.EmailView extends Backbone.View
       this.listenTo(@model, "change", @render)
 
   presenter: =>
-    _.extend(_.clone(@model.attributes),
+    _.extend _.clone(@model.attributes),
       htmlBodyURL: @model.htmlBodyURL()
       isHTML: @model.isHTML()
-    )
 
   render: =>
     $(@el).html(this.template(this.presenter()))
