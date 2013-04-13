@@ -19,6 +19,11 @@ class @Melnitz.Email extends Backbone.Model
   urlRoot: "/emails"
   url: =>
     @urlRoot + "/" + encodeURIComponent(this.get("id"))
+  expandedClassName: =>
+    if this.get("expanded")
+      "expanded email-expanded"
+    else
+      "collapsed email-collapsed"
   htmlSafeId: =>
     HTMLUtil.escapeAttr(this.get("id"))
   isHTML: =>

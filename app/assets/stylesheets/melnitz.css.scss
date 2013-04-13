@@ -2,6 +2,18 @@
   list-style-type: none;
 }
 
+.thread-collapsed, .email {
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.thread-expanded {
+  &:hover {
+    background-color: #efefef;
+  }
+}
+
 .thread-toggle, .email-toggle {
   cursor: pointer;
 }

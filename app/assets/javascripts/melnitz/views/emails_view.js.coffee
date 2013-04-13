@@ -9,7 +9,7 @@ class @Melnitz.EmailsView extends Backbone.View
     <h2>{{header}}</h2>
     <ol class="threads-list">
       {{#each threads}}
-      <li class="thread-list-item" data-thread-id="{{{htmlSafeSubject}}}"></li>
+      <li class="thread-list-item {{expandedClassName}}" data-thread-id="{{{htmlSafeSubject}}}"></li>
       {{/each}}
     </ol>
     """
@@ -31,9 +31,12 @@ class @Melnitz.EmailsView extends Backbone.View
     this.listenTo(@collection, "destroy", @updateThreads)
 
   toggleThread: (event) =>
-    threadId = HTMLUtil.unescapeAttr($(event.target).closest("[data-thread-id]").data("thread-id"))
+    $threadContainer = $(event.target).closest("[data-thread-id]")
+    threadId = HTMLUtil.unescapeAttr($threadContainer.data("thread-id"))
     thread = @threads[threadId]
+    $threadContainer.removeClass(thread.expandedClassName())
     thread.expanded = !(thread.expanded)
+    $threadContainer.addClass(thread.expandedClassName())
     thread.render()
 
   updateThreads: =>

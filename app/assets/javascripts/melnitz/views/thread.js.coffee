@@ -11,8 +11,8 @@ class @Melnitz.Thread extends Backbone.View
     <h3 class="subject thread-subject thread-toggle">{{subject}}</h2>
     {{#if expanded}}
     <ol class="emails-list">
-      {{#each emailIds}}
-      <li class="email-list-item" data-email-id="{{this}}"></li>
+      {{#each emails}}
+      <li class="email-list-item {{expandedClassName}}" data-email-id="{{id}}"></li>
       {{/each}}
     </ol>
     {{/if}}
@@ -39,7 +39,7 @@ class @Melnitz.Thread extends Backbone.View
       email.fetch()
 
   presenter: =>
-    emailIds: _.keys(@emails)
+    emails: _.values(@emails)
     expanded: @expanded
     subject: @subject
 
@@ -61,6 +61,12 @@ class @Melnitz.Thread extends Backbone.View
 
   includesEmail: (email) =>
     @emails.hasOwnProperty(email.get("id"))
+
+  expandedClassName: =>
+    if @expanded
+      "expanded thread-expanded"
+    else
+      "collapsed thread-collapsed"
 
 @Melnitz.Thread.extractSubject = (email) ->
   # TODO: more advanced, e.g. ignoring parentheticals?
