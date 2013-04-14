@@ -65,9 +65,13 @@ describe "Melnitz.Thread", ->
       subject = Melnitz.Thread.extractSubject(new Melnitz.Email({subject: "FW: RE: words some words  repeated words words"}))
       expect(subject).toBe("words some words  repeated words words")
 
-    it "removes a prepended 'Canceled:' from the subject", ->
+    it "ignores a prepended 'Canceled:' from the subject", ->
       subject = Melnitz.Thread.extractSubject(new Melnitz.Email({subject: "Canceled: some event"}))
       expect(subject).toBe("some event")
+
+    it "ignores a trailing parenthetical from the subject", ->
+      subject = Melnitz.Thread.extractSubject(new Melnitz.Email({subject: "[Some Group] some document (New Comment)"}))
+      expect(subject).toBe("[Some Group] some document")
 
 buildEmail = (attributes = {}) ->
   attributes.id ?= "abc123"

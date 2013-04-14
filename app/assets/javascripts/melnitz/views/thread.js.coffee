@@ -71,4 +71,14 @@ class @Melnitz.Thread extends Backbone.View
 
 @Melnitz.Thread.extractSubject = (email) ->
   # TODO: more advanced, e.g. ignoring parentheticals?
-  email?.get("subject")?.replace(/(^canceled|fw|re):{1,}\s*/gi, "").trim()
+  emailSubject = email?.get("subject")
+  return emailSubject unless emailSubject
+  removals = [
+    # indicators that do not change the subject core, e.g. "FW:"
+    /(^canceled|fw|re):{1,}\s*/gi,
+    # trailing parentheticals
+    /\([^\)]+\)\s*$/g
+  ]
+  remove = (subject, removal) ->
+    subject.replace(removal, "")
+  _.reduce(removals, remove, emailSubject).trim()
