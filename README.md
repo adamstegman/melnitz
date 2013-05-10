@@ -70,15 +70,18 @@ TODO: does uCern have a Jive API so I can do something similar to JIRA sorting?
 
 ## Development
 
+Install at least version 7 of the JDK.
+
 Download the [EWS Java dependency][ewsapi] and extract it to `vendor/lib`.
 
     mkdir -p vendor/lib
     cp ~/Downloads/EWSJavaAPI_1.2/EWSJavaAPI_1.2.jar vendor/lib/
 
-Install [Maven][maven] to download other dependencies.
-Then run the rake task to copy down those dependencies so the scripts can use them.
+Download the remaining dependencies and then start the Rails server.
 
-    rake deps
+    bundle
+    jbundle
+    script/rails server
 
 ### Packaging and release
 

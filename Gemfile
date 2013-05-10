@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'jbundler'
 gem 'jruby-openssl'
 gem 'rails', '~> 3.2.13'
 gem 'roar-rails'

@@ -1,11 +1,7 @@
 # coding: UTF-8
 
-require 'java'
-EWS_JAR = 'EWSJavaAPI_1.2.jar'
-EWS_DEPENDENCIES = %w(commons-codec-1.2.jar commons-httpclient-3.1.jar commons-logging-1.0.4.jar commons-logging-api-1.1.jar jcifs-1.3.3.jar)
-(EWS_DEPENDENCIES + [EWS_JAR]).each do |jar|
-  require "vendor/lib/#{jar}"
-end
+require 'jbundler'
+require 'vendor/lib/EWSJavaAPI_1.2.jar'
 
 def microsoft
   Java::Microsoft
@@ -32,6 +28,8 @@ java_import microsoft.exchange.webservices.data.BasePropertySet,
 module Exchange
   # Public: Connects to an Exchange service specified by the given configuration.
   #
+  # TODO: handle EWSHttpException
+  #
   # config - Required configuration (keys are Strings):
   #          host     - Exchange service hostname
   #          mailbox  - e.g. "as016194@cerner.com"
@@ -44,7 +42,7 @@ module Exchange
     def fetch_all_unread_emails
       all_email_folders = child_folder_list(folder(WellKnownFolderName::MsgFolderRoot)).select(&method(:email_folder?))
       # TODO: may want to group by folder rather than flatten
-      all_email_folders.map(&method(:fetch_unread_items)).reject(&:empty?).flatten
+      all_email_folders.flat_map(&method(:fetch_unread_items))
     end
 
     # Public: Retrieves details for the given email_id.
@@ -110,7 +108,7 @@ module Exchange
       else
         # recurse over the children to find all descendants
         children = parent_folder.find_folders(FolderView.new(parent_folder.child_folder_count)).folders
-        [parent_folder] + children.map(&method(:child_folder_list)).flatten
+        children.flat_map(&method(:child_folder_list)).unshift(parent_folder)
       end
     end
 
