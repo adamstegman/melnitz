@@ -1,7 +1,7 @@
 # Teabag includes some support files, but you can use anything from your own support path too.
-# require support/jasmine-jquery
-# require support/sinon
-# require support/your-support-file
+#= require support/sinon
+#= require support/crucible_helper
+#= require support/jira_helper
 #
 # Deferring execution
 # If you're using CommonJS, RequireJS or some other asynchronous library you can defer execution. Call Teabag.execute()

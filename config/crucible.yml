@@ -1,0 +1,5 @@
+development:
+  base_uri: http://reviews.mycorp.com
+
+test:
+  base_uri: http://test.host

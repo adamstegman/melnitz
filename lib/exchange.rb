@@ -40,7 +40,9 @@ module Exchange
   Client = Struct.new(:config) do
     # Public: Retrieves unread emails from every folder.
     def fetch_all_unread_emails
-      all_email_folders = child_folder_list(folder(WellKnownFolderName::MsgFolderRoot)).select(&method(:email_folder?))
+      all_email_folders = child_folder_list(folder(WellKnownFolderName::MsgFolderRoot))
+        .select(&method(:email_folder?))
+        .reject(&method(:ignored_folder?))
       # TODO: may want to group by folder rather than flatten
       all_email_folders.flat_map(&method(:fetch_unread_items))
     end
@@ -56,7 +58,7 @@ module Exchange
     #
     # Returns an Array of Item objects.
     def fetch_unread_items(folder)
-      item_view = ItemView.new(10) # FIXME: 5000
+      item_view = ItemView.new(10) # FIXME: some huge number like 5000, but the JS app is too slow for that
       item_view.property_set = EMAIL_SUMMARY_PROPERTY_SET
       folder.find_items(SearchFilter::IsEqualTo.new(EmailMessageSchema::IsRead, false), item_view).items.to_a
     end
@@ -95,6 +97,9 @@ module Exchange
     # of the EmailMessage to request from the service.
     EMAIL_SUMMARY_PROPERTY_SET = PropertySet.new(BasePropertySet::IdOnly, [ItemSchema::Subject].to_java(PropertyDefinitionBase))
 
+    # Internal: The display names of the folders that should be ignored when checking for unread emails.
+    IGNORED_FOLDERS = ['Deleted Items', 'Drafts', 'Junk E-mail']
+
     private
 
     # Internal: Recursively retrieves the descendant Folders from the given parent_folder.
@@ -119,7 +124,7 @@ module Exchange
 
     # Internal: Determines if the given Folder is an Exchange email folder.
     def email_folder?(folder)
-      folder.folder_class == 'IPF.Note'
+      folder.folder_class.nil? || folder.folder_class == 'IPF.Note'
     end
 
     # Internal: Retrieves the Folder object from the #service with the given name.
@@ -127,6 +132,11 @@ module Exchange
     # name - a WellKnownFolderName.
     def folder(name)
       Folder.bind(service, FolderId.new(name, Mailbox.new(self.config['mailbox'])))
+    end
+
+    # Internal: Determines if the given Folder is ignored and should not be read.
+    def ignored_folder?(folder)
+      IGNORED_FOLDERS.include?(folder.display_name)
     end
 
     # Internal: Creates an ExchangeService to request items from.

@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'jbundler'
 gem 'jruby-openssl'
+gem 'nesty'
 gem 'rails', '~> 3.2.13'
 gem 'roar-rails'
 
@@ -23,6 +24,10 @@ group :development do
 end
 
 group :development, :test do
-  gem 'teabag'
   gem 'rspec-rails'
+  gem 'teabag'
+end
+
+group :test do
+  gem 'webmock', require: 'webmock/rspec'
 end

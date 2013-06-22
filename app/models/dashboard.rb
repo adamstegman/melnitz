@@ -16,8 +16,8 @@ class Dashboard
   # Public: Gets emails from uCern.
   attr_reader :ucern
 
-  # Internal: Matches JIRA and Crucible identifiers, e.g. `(PHAPPINFRA-CR-239)`.
-  JIRA_SUBJECT = /\([\w-]+-\d+\)/
+  # Internal: Matches JIRA and Crucible identifiers, e.g. `PHAPPINFRA-CR-239`.
+  JIRA_SUBJECT = /([A-Z]+-)+\d+/
 
   # Internal: Matches project identifiers, e.g. `[provider_portal]`.
   #

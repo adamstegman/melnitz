@@ -19,5 +19,13 @@ Melnitz::Application.routes.draw do
     end
   end
 
+  namespace :crucible do
+    resources :reviews, only: [:show]
+  end
+
+  namespace :jira do
+    resources :issue, only: [:show]
+  end
+
   mount Kss::Engine => '/styles' if Rails.env.development?
 end

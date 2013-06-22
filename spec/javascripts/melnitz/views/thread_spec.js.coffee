@@ -6,6 +6,12 @@ describe "Melnitz.Thread", ->
     thread = new Melnitz.Thread({emails: [buildEmail({subject: "[Some Group] some discussion"})]})
     expect(thread.subject).toBe("[Some Group] some discussion")
 
+  it "accepts a subject in the constructor", ->
+    thread = new Melnitz.Thread
+      emails: [buildEmail({subject: "[Some Group] some discussion"})]
+      subject: "suggested subject"
+    expect(thread.subject).toBe("suggested subject")
+
   it "maintains an HTML-attribute-safe version of the subject", ->
     thread = new Melnitz.Thread({emails: [buildEmail({subject: "[Some Group] some discussion"})]})
     expect(thread.htmlSafeSubject).toBe("\\[Some\\ Group\\]\\ some\\ discussion")
