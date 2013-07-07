@@ -3,29 +3,9 @@
 [Working title][melnitz].
 Sorts the mail and presents it in a dashboard so you can act on it instead of trying to figure out threads on your own.
 
-TODO: remove myself from SEMANTIC bugs I don't care about (have not commented on and am not assigned to)
-
-TODO: summarize threads based on type
-
-TODO: EWS API 2.0: http://msdn.microsoft.com/en-us/library/exchange/dd633709(v=exchg.80).aspx
-
-TODO: include JIRA details in a hidden section that can be expanded
-
-TODO: roll up JIRA comments into a more condensed display that looks more like what JIRA has on its pages
-
-TODO: find "edited" comments and update the original with the new content
-
-TODO: thread deletion
-
-TODO: calendar events
-
-TODO: different sorting options
-
-TODO: queue offline actions
-
 ## Usage
 
-TODO: configuration
+TODO: configuration within the UI (issue #7)
 
 ## Design
 
@@ -41,8 +21,6 @@ There are three sections:
 
 Personal emails are the ones that Melnitz has no particular rules about.
 They are considered "personal", to be handled by you.
-
-TODO: allow customizing of this, with additional rules.
 
 ### Issues
 
@@ -68,9 +46,6 @@ Those emails are then grouped under each project by the thread they are in, grou
 ### uCern
 
 uCern emails are grouped by thread and uCern Wiki emails by page under this tab.
-
-TODO: rank groups by importance
-TODO: does uCern have a Jive API so I can do something similar to JIRA sorting?
 
 ## Development
 
