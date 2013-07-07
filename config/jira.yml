@@ -1,5 +1,6 @@
 development:
   base_uri: http://issues.mycorp.com
+  username: MYNAME
 
 test:
   base_uri: http://test.host

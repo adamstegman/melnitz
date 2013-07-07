@@ -7,6 +7,7 @@ gem 'jruby-openssl'
 gem 'nesty'
 gem 'rails', '~> 3.2.13'
 gem 'roar-rails'
+gem 'settingslogic'
 
 # Gems used only for assets and not required in production environments by default.
 group :assets do

@@ -53,9 +53,12 @@ class @Melnitz.EmailsView extends Backbone.View
     #       may want to have a separate function that updates the rendering rather than replacing it
     this.render()
 
+  threadList: =>
+    _.values(@threads)
+
   presenter: =>
     header: @header
-    threads: _.values(@threads)
+    threads: this.threadList()
 
   render: =>
     # @$el.html() does not work

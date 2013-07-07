@@ -9,7 +9,7 @@ TODO: summarize threads based on type
 
 TODO: EWS API 2.0: http://msdn.microsoft.com/en-us/library/exchange/dd633709(v=exchg.80).aspx
 
-TODO: use Crucible/JIRA API to prioritize JIRA/reviews I am assigned to, then JIRA/reviews I have commented on.
+TODO: include JIRA details in a hidden section that can be expanded
 
 TODO: roll up JIRA comments into a more condensed display that looks more like what JIRA has on its pages
 

@@ -7,13 +7,11 @@ class @JIRA
 
   # Public: Retrieves details about the issue identified by the given key.
   #
-  # issueKey   - A String issue key, which can be either the full issue key (e.g. "MYISSUE-1") or the issue id (e.g. 57938).
-  # attributes - Optionally a list of issue attributes to return.
+  # issueKey - A String issue key, which can be either the full issue key (e.g. "MYISSUE-1") or the issue id (e.g. 57938).
   #
   # Returns a Promise for the resulting issue data (as an Object).
-  getIssue: (issueKey, attributes...) =>
+  getIssue: (issueKey) =>
     uri = "#{@base_uri}/issue/#{issueKey}"
-    # TODO: attributes
     request = new XMLHttpRequest
     response = Q.defer()
     request.open("GET", uri)

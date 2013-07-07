@@ -5,12 +5,18 @@ require 'net/http'
 require 'uri'
 
 module Crucible
-  # Public: Crucible 2.9 REST API client. Initialize with the Crucible root URL, e.g. "http://reviews.myco.com".
+  # Public: Global Crucible configuration. Sourced from config/crucible.yml.
+  class Config < Settingslogic
+    source    Rails.root.join('config', 'crucible.yml')
+    namespace Rails.env
+  end
+
+  # Public: Crucible 2.9 REST API client.
   #
   # Crucible API documentation: https://docs.atlassian.com/fisheye-crucible/2.9.1/wadl/crucible.html
   #
   # TODO: test with other Crucible API versions
-  Client = Struct.new(:config) do
+  class Client
     # Public: Retrieves details about the review identified by the given key.
     #
     # review_key - A review key, e.g. "MYISSUE-CR-1".
@@ -31,7 +37,7 @@ module Crucible
     private
 
     def base_uri
-      @base_uri ||= "#{config[:base_uri]}/rest-service"
+      @base_uri ||= "#{Config.base_uri}/rest-service"
     end
 
     def get(path)
@@ -47,7 +53,7 @@ module Crucible
     end
   end
 
-  # Public: The JIRA service is unreachable.
+  # Public: The Crucible service is unreachable.
   #
   # The causing exception is reachable at #nested.
   class ServiceUnreachableError < Nesty::NestedStandardError

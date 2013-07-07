@@ -5,12 +5,18 @@ require 'net/http'
 require 'uri'
 
 module JIRA
-  # Public: JIRA 5.2 REST API client. Initialize with the JIRA root URL, e.g. "http://jira.myco.com".
+  # Public: Global JIRA configuration. Sourced from config/jira.yml.
+  class Config < Settingslogic
+    source    Rails.root.join('config', 'jira.yml')
+    namespace Rails.env
+  end
+
+  # Public: JIRA 5.2 REST API client.
   #
   # JIRA API documentation: http://docs.atlassian.com/jira/REST/latest/
   #
   # TODO: test with other JIRA API versions
-  Client = Struct.new(:config) do
+  class Client
     # Public: Retrieves details about the issue identified by the given key.
     #
     # issue_key - An issue key, which can be either the full issue key String (e.g. "MYISSUE-1") or the issue id
@@ -32,7 +38,7 @@ module JIRA
     private
 
     def base_uri
-      @base_uri ||= "#{config[:base_uri]}/rest/api/latest"
+      @base_uri ||= "#{Config.base_uri}/rest/api/latest"
     end
 
     def get(path)

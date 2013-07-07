@@ -1,0 +1,200 @@
+#= require melnitz/views/emails_view
+#= require crucible
+#= require jira
+#= require q
+
+# Public: The Melnitz section containing issue-related emails as defined in the README.
+#
+# Emails are organized by story. Stories are defined as root issues in JIRA. Subtasks are organized under stories, as
+# are Crucible reviews where possible.
+#
+# Sorts the stored threads, prioritizing based on:
+#
+# * JIRA/reviews I am assigned to
+# * JIRA/reviews I have commented on
+# * everything else
+class @Melnitz.Issues extends @Melnitz.EmailsView
+  header: "Issues and Code Reviews"
+  initialize: (options) ->
+    @options = _.defaults options,
+      crucible:
+        client: new Crucible
+      jira:
+        client: new JIRA
+        username: "<%= JIRA::Config.username %>"
+    @collection = new Melnitz.Emails
+    @collection.url = "/emails/issues"
+    @jira = @options.jira.client
+    @issueDetailsCache = new Melnitz.Issues.Cache
+    @crucible = @options.crucible.client
+    super
+  threadList: =>
+    sortedThreads = new Melnitz.Issues.SortedThreads(@options)
+    sortedThreads.addThreads(_.values(@threads))
+    sortedThreads.toArray()
+  updateThreads: =>
+    _.each @collection.models, (email) =>
+      this.getIssueDetails(email).done (issueDetails) =>
+        parentIssueDetails = issueDetails?.fields?.parent
+        subjectIssueKey = parentIssueDetails?.key ? issueDetails?.key
+        subjectIssueSummary = parentIssueDetails?.fields?.summary ? issueDetails?.fields?.summary
+        this.updateThread(email, formatIssueSubject(subjectIssueKey, subjectIssueSummary), subjectIssueKey)
+      , (error) =>
+        this.updateThread(email, email.get("subject"))
+
+  # Internal: Creates/updates a thread with the given subject, and ensures the given email is in it.
+  updateThread: (email, subject, issueKey) =>
+    @threads[subject] ?= new Melnitz.Thread({subject: subject})
+    @threads[subject].issueKey = issueKey
+    @threads[subject].addEmail(email)
+    this.render()
+
+  # Internal: Returns a promise for the issue details related to the given email.
+  #
+  # If necessary, retrieves those details from the JIRA service.
+  getIssueDetails: (email) =>
+    issueDetails = this.getIssueDetailsFromCache(email)
+    if issueDetails
+      Q.fcall -> issueDetails
+    else
+      cacheIssueDetailsForEmail = _.partial(@cacheIssueDetails, email)
+      this.getIssueKey(email)
+        .then (issueKey) => this.fetchIssueDetails(issueKey)
+        .then (issueDetails) ->
+          cacheIssueDetailsForEmail(issueDetails)
+          issueDetails
+
+  # Internal: Returns a promise for the issue key for the given email.
+  #
+  # If necessary, retrieves the issue key from the Crucible API.
+  getIssueKey: (email) =>
+    if isCrucible(email)
+      this.getReviewKey(email)
+        .then (reviewKey) => this.fetchReviewDetails(reviewKey)
+        .then (reviewDetails) => reviewDetails?.jiraIssueKey ? this.getKey(reviewDetails.name)
+    else
+      this.getKey(email.get("subject"))
+
+  # Internal: Returns a promise for the review key for the given email.
+  getReviewKey: (email) =>
+    this.getKey(email.get("subject"))
+
+  # Internal: Returns a promise for a JIRA/Crucible key from the given string.
+  getKey: (string) ->
+    key = extractKey(string)
+    if key
+      Q.fcall -> key
+    else
+      Q.fcall -> throw new Melnitz.Issues.MissingKeyError(string)
+
+  # Internal: Retrieves issue details for the issue with the given issueKey from the JIRA service.
+  #
+  # Returns a promise for the issue details.
+  fetchIssueDetails: (issueKey) =>
+    @jira.getIssue(issueKey)
+
+  # Internal: Retrieves the review details for the Crucible review with the given reviewKey from the Crucible service.
+  #
+  # Returns a promise for the review details.
+  fetchReviewDetails: (reviewKey) =>
+    @crucible.getReview(reviewKey)
+
+  # Internal: Attempts to retrieve the issue details for the given email from the cache.
+  getIssueDetailsFromCache: (email) =>
+    @issueDetailsCache.getData(email)
+
+  # Internal: Caches the issue details for the given email to avoid another fetch.
+  #
+  # TODO: cache issue key by email, then cache jira details in JIRA client, so that we're not handling all the caching here
+  cacheIssueDetails: (email, issueDetails) =>
+    @issueDetailsCache.setData(email, issueDetails)
+
+# Public: No key could be extracted from the given Email.
+class @Melnitz.Issues.MissingKeyError extends Error
+  constructor: (@message) ->
+    @name = "MissingKey"
+    super
+
+# Internal: Caches a piece of data per Email.
+class @Melnitz.Issues.Cache
+  # Internal: Attempts to retrieve the Object for the given email from the cache.
+  #
+  # TODO: will want to invalidate this cache if I persist anything, or plan on this being long-lived
+  # TODO: persist this in localStorage
+  #
+  # Returns the cached Object, or undefined if nothing is cached for this email.
+  getData: (email) =>
+    @cache?[email.get("id")]
+
+  # Internal: Caches the Object for the given email to avoid another fetch.
+  setData: (email, object) =>
+    @cache ?= {}
+    @cache[email.get("id")] = object
+
+# Internal: Sorts the given threads and returns them in order when #toArray is called.
+class @Melnitz.Issues.SortedThreads
+  constructor: (@options) ->
+
+  addThreads: (threads) =>
+    @jiraDetails ?= {}
+    @assigned  = []
+    @commented = []
+    @other     = []
+    _.each threads, (thread) =>
+      if thread.issueKey
+        this.getAllDetails(thread.issueKey)
+        if this.isAssigned(thread)
+          @assigned.push(thread)
+        else if this.isCommented(thread)
+          @commented.push(thread)
+        else
+          @other.push(thread)
+      else
+        @other.push(thread)
+
+  toArray: =>
+    @assigned.concat(@commented).concat(@other)
+
+  # Fetch and store details of this issue and its subtasks.
+  getAllDetails: (issueKey) =>
+    return if @jiraDetails[issueKey]
+    storeIssueDetailsForKey = _.partial(@storeIssueDetails, issueKey)
+    @options.jira.client.getIssue(issueKey).done (issueDetails) ->
+      storeIssueDetailsForKey(issueDetails)
+      _.each issueDetails?.subtasks ? [], (subtask) -> getAllDetails(subtask.key)
+
+  storeIssueDetails: (issueKey, issueDetails) =>
+    @jiraDetails[issueKey] = issueDetails
+
+  isAssigned: (thread) =>
+    issueKeys = _.map @jiraDetails[thread.issueKey]?.subtasks ? [], (subtask) -> subtask.key
+    issueKeys.unshift(thread.issueKey)
+    _.some issueKeys, @issueIsAssigned
+
+  issueIsAssigned: (issueKey) =>
+    @options.jira.username && @jiraDetails[issueKey]?.fields?.assignee?.name == @options.jira.username
+
+  isCommented: (thread) =>
+    issueKeys = _.map @jiraDetails[thread.issueKey]?.subtasks ? [], (subtask) -> subtask.key
+    issueKeys.unshift(thread.issueKey)
+    _.some issueKeys, @issueIsCommented
+
+  issueIsCommented: (issueKey) =>
+    if @options.jira.username
+      _.some @jiraDetails[issueKey]?.fields?.comment?.comments ? [], (comment) -> comment.author.name == @options.jira.username
+
+# Internal: Extracts a JIRA/Crucible key from the given string.
+#
+# Returns undefined if one could not be found.
+extractKey = (string) -> /([A-Z]+-)+\d+/.exec(string)?[0]
+
+# Internal: Formats the subject for a JIRA thread.
+#
+# issueKey     - The JIRA issue key
+# issueSummary - The JIRA issue summary
+formatIssueSubject = (issueKey, issueSummary) ->
+  "#{issueKey}: #{issueSummary}"
+
+# Internal: Returns true if the given email is considered a Crucible email.
+isCrucible = (email) ->
+  /^\[Crucible\]/.test(email?.get("subject"))

@@ -4,8 +4,7 @@ require 'spec_helper'
 require 'lib/crucible'
 
 describe Crucible::Client do
-  let(:client_config) { {base_uri: 'http://test.host'} }
-  let(:client) { described_class.new(client_config) }
+  let(:client) { described_class.new }
 
   describe '#fetch_review(review_key)' do
     let(:review_key) { 'ISSUE-CR-1' }

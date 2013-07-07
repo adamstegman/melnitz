@@ -3,8 +3,7 @@
 require 'spec_helper'
 
 describe JIRA::Client do
-  let(:client_config) { {base_uri: 'http://test.host'} }
-  let(:client) { described_class.new(client_config) }
+  let(:client) { described_class.new }
 
   describe '#fetch_issue(issue_key)' do
     let(:issue_key) { 'ISSUE-1' }
