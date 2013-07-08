@@ -14,9 +14,11 @@ describe "Melnitz.Issues", ->
   describe "#threadList", ->
     it "prioritizes threads based on my JIRA activity", ->
       assignedSubtask = "Issue (PROJECT-5) [some_component] summary"
+      assignedParent = "Issue (PROJECT-4) [project] summary"
       commentedStory = "Issue (PROJECT-1) [project] summary"
       untouched = "Issue (PROJECT-3) [some_other_component] summary"
       assignedSubtaskEmail = new Melnitz.Email({id: 'assignedSubtask', subject: assignedSubtask})
+      assignedParentEmail = new Melnitz.Email({id: 'assignedParent', subject: assignedParent})
       commentedStoryEmail = new Melnitz.Email({id: 'commentedStory', subject: commentedStory})
       untouchedEmail = new Melnitz.Email({id: 'untouched', subject: untouched})
       @mockJIRAClient["PROJECT-1"] = Q.fcall -> JIRAHelper.issue "PROJECT-1", {summary: "[project] summary", comment: {comments: [{author: {name: "myName"}}]}}
@@ -24,15 +26,15 @@ describe "Melnitz.Issues", ->
       @mockJIRAClient["PROJECT-4"] = Q.fcall -> JIRAHelper.issue "PROJECT-4", {summary: "[project] summary"}
       @mockJIRAClient["PROJECT-5"] = Q.fcall -> JIRAHelper.issue "PROJECT-5", {summary: "[some_component] summary", assignee: {name: "myName"}, parent: {key: "PROJECT-4", fields: {summary: "[project] summary"}}}
       issues = new Melnitz.Issues({crucible: {client: @mockCrucibleClient}, jira: {client: @mockJIRAClient, username: "myName"}})
-      issues.collection = new Melnitz.Emails([assignedSubtaskEmail, commentedStoryEmail, untouchedEmail])
+      issues.collection = new Melnitz.Emails([assignedSubtaskEmail, assignedParentEmail, commentedStoryEmail, untouchedEmail])
 
       expectedThreadList = [
-        {subject: "PROJECT-4: [project] summary", emails: {assignedSubtask: assignedSubtaskEmail}},
+        {subject: "PROJECT-4: [project] summary", emails: {assignedParent: assignedParentEmail, assignedSubtask: assignedSubtaskEmail}},
         {subject: "PROJECT-1: [project] summary", emails: {commentedStory: commentedStoryEmail}},
         {subject: "PROJECT-3: [some_other_component] summary", emails: {untouched: untouchedEmail}}
       ]
       runs -> issues.updateThreads()
-      waitsFor _.bind(isEmailCategorized, this, issues, 3), "should have added all emails to threads", 500
+      waitsFor _.bind(isEmailCategorized, this, issues, 4), "should have added all emails to threads", 500
       runs ->
         actualThreadList = issues.threadList()
         expect(actualThreadList.length).toBe(expectedThreadList.length)
