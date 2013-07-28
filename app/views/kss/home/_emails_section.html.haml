@@ -21,7 +21,9 @@
       %li.thread-list-item.thread-collapsed{class: '$modifier_class'}
         %section.thread
           %h3.subject.thread-subject.thread-toggle Thread subject
-          %ol.emails-list
+          %aside.thread-contents.thread-issue-details
+            %h4 Thread details
+          %ol.thread-contents.emails-list
             %li.email-list-item
               %article.email
                 %h4.subject.email-subject.email-toggle Email subject
@@ -32,7 +34,9 @@
       %li.thread-list-item.thread-expanded{class: '$modifier_class'}
         %section.thread
           %h3.subject.thread-subject.thread-toggle Thread subject
-          %ol.emails-list
+          %aside.thread-contents.thread-issue-details
+            %h4 Thread details
+          %ol.thread-contents.emails-list
             %li.email-list-item
               %article.email
                 %h4.subject.email-subject.email-toggle Email subject

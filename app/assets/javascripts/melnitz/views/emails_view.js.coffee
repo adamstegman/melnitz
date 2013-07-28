@@ -9,7 +9,7 @@ class @Melnitz.EmailsView extends Backbone.View
     <h2>{{header}}</h2>
     <ol class="threads-list">
       {{#each threads}}
-      <li class="thread-list-item {{expandedClassName}}" data-thread-id="{{{htmlSafeSubject}}}"></li>
+      <li class="thread-list-item {{expandedClassName}}" data-thread-id="{{{id}}}"></li>
       {{/each}}
     </ol>
     """
@@ -25,6 +25,7 @@ class @Melnitz.EmailsView extends Backbone.View
     # TODO: maintain expanded threads and expanded emails in query/hash parameters
     @threads = {}
 
+    # FIXME: run these in a background worker so they don't block the UI
     this.listenTo(@collection, "add", @updateThreads)
     this.listenTo(@collection, "remove", @updateThreads)
     this.listenTo(@collection, "reset", @updateThreads)
@@ -42,13 +43,13 @@ class @Melnitz.EmailsView extends Backbone.View
   updateThreads: =>
     # FIXME: need a way to only see the added/removed emails, want to simply add/remove emails from threads without doing all this iteration
     # FIXME: this does not remove, only adds/updates
-    # TODO: I feel like a Threads collection should handle this logic and this just renders it
+    # OPTIMIZE: I feel like a Threads collection should handle this logic and this just renders it
     _.each @collection.models, (email) =>
-      emailSubject = Melnitz.Thread.extractSubject(email)
-      if @threads[emailSubject]
-        @threads[emailSubject].addEmail(email)
+      thread = new Melnitz.Thread({emails: [email]})
+      if @threads[thread.id()]
+        @threads[thread.id()].addEmail(email)
       else
-        @threads[emailSubject] = new Melnitz.Thread({emails: [email]})
+        @threads[thread.id()] = thread
     # TODO: is this efficient? it replaces everything when adding/removing emails
     #       may want to have a separate function that updates the rendering rather than replacing it
     this.render()

@@ -1,3 +1,5 @@
+@import "foundation";
+
 $backgroundHighlight: #efefef;
 $foregroundHighlight: #ddd;
 
@@ -22,12 +24,12 @@ $foregroundHighlight: #ddd;
         background-color: $foregroundHighlight;
       }
 
-      .emails-list {
+      .thread-contents {
         display: none;
       }
     }
 
-    // An expanded thread, which shows each email message in the thread.
+    // An expanded thread, which shows the thread's contents.
     //
     // :hover - lightens the expanded thread so you can see which email is selected.
     //
@@ -36,10 +38,7 @@ $foregroundHighlight: #ddd;
       &:hover {
         background-color: $backgroundHighlight;
       }
-
-      .emails-list {
-        display: block;
-      }
+      /* FIXME: make sure that removing display: none makes .thread-contents show up */
     }
   }
 }
@@ -82,6 +81,66 @@ $foregroundHighlight: #ddd;
         .attributes {
           display: block;
         }
+      }
+    }
+  }
+
+  // The details of the issue associated to this thread.
+  //
+  // Styleguide 2.3.
+  .thread-issue-details {
+    // The thread header which the user can click to expand or collapse the thread.
+    //
+    // Styleguide 2.3.1.
+    .thread-issue-details-toggle {
+      cursor: pointer;
+    }
+
+    // The issue description.
+    //
+    // Styled as pre-formatted text until it can be rendered properly, as Confluence does.
+    //
+    // Styleguide 2.3.2.
+    .thread-issue-description {
+      white-space: pre-wrap;
+    }
+
+    // Collapsed thread details, which shows only a toggle to show the details.
+    //
+    // Styleguide 2.3.3.
+    &.thread-issue-details-collapsed {
+      .thread-issue-details-content {
+        display: none;
+      }
+    }
+
+    // Expanded thread details, which shows the details of the issue associated with the thread.
+    //
+    // Styleguide 2.3.4.
+    &.thread-issue-details-expanded {
+    }
+
+    // Thread details that fall into a keyed list.
+    //
+    // Aligned into two key-value columns.
+    //
+    // Styleguide 2.3.5.
+    .thread-issue-details-keyed-list {
+      @include block-grid(2);
+
+      .row {
+        @include grid-column(6);
+      }
+
+      // Thread detail labels.
+      dt {
+        @include grid-column(4);
+      }
+
+      // Thread detail values.
+      dd {
+        @include grid-column(8);
+        padding-top: 1px;
       }
     }
   }

@@ -12,22 +12,18 @@ describe "Melnitz.Thread", ->
       subject: "suggested subject"
     expect(thread.subject).toBe("suggested subject")
 
-  it "maintains an HTML-attribute-safe version of the subject", ->
-    thread = new Melnitz.Thread({emails: [buildEmail({subject: "[Some Group] some discussion"})]})
-    expect(thread.htmlSafeSubject).toBe("\\[Some\\ Group\\]\\ some\\ discussion")
-
   describe "#addEmail", ->
     it "adds the email to the thread", ->
       thread = new Melnitz.Thread
       email = buildEmail()
       thread.addEmail(email)
-      expect(_.isEqual(thread.emails, {abc123: email})).toBe(true)
+      expect(thread.includesEmail(email)).toBe(true)
 
     it "replaces an existing email with the same id", ->
       email = buildEmail()
       thread = new Melnitz.Thread({emails: [email]})
       thread.addEmail(email)
-      expect(_.isEqual(thread.emails, {abc123: email})).toBe(true)
+      expect(thread.includesEmail(email)).toBe(true)
 
     it "fires an addEmail event if the email is new", ->
       fired = false
@@ -61,6 +57,24 @@ describe "Melnitz.Thread", ->
       , "The add event should be fired", 75)
       runs ->
         expect(fired).toBe(false)
+
+  describe "#id", ->
+    it "returns the HTML-escaped subject", ->
+      thread = new Melnitz.Thread
+      thread.subject = "some/subject&with=special characters"
+      expect(thread.id()).toBe("some\\/subject\\&with\\=special\\ characters")
+
+  describe "#includesEmail", ->
+    it "is true for an email that has been added", ->
+      thread = new Melnitz.Thread
+      email = buildEmail()
+      thread.addEmail(email)
+      expect(thread.includesEmail(email)).toBe(true)
+
+    it "is false for an email that has not been added", ->
+      thread = new Melnitz.Thread
+      email = buildEmail()
+      expect(thread.includesEmail(email)).toBe(false)
 
   describe ".extractSubject", ->
     it "removes extraneous sections of the subject", ->

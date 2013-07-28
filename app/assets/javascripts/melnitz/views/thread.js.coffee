@@ -16,7 +16,7 @@ class @Melnitz.Thread extends Backbone.View
     </ol>
     """
 
-  events:
+  events: ->
     "click .email-toggle": "toggleEmail"
 
   # Public: Creates a thread with the given options.
@@ -27,13 +27,9 @@ class @Melnitz.Thread extends Backbone.View
   #           subject - A predefined subject for the thread (default: extractSubject(emails[0])).
   initialize: (options) ->
     emails = options?.emails ? []
+    @subject = options?.subject
     @emails = {}
-    _.each emails, (email) =>
-      this.addEmail(email)
-    # TODO: allow this to be undefined for now and set it when the first email is added
-    @subject = options?.subject ? Melnitz.Thread.extractSubject(emails[0])
-    @htmlSafeSubject = HTMLUtil.escapeAttr(@subject)
-    # TODO: @summary
+    _.each emails, (email) => @addEmail(email)
 
   # Public: Toggles the display of the email indicated by the event. The email is discovered by reading the closest
   # data-email-id attribute.
@@ -45,8 +41,7 @@ class @Melnitz.Thread extends Backbone.View
     expanded = !(email.get("expanded"))
     email.set("expanded", expanded)
     $emailContainer.addClass(email.expandedClassName())
-    if expanded
-      email.fetch()
+    email.fetch() if expanded
 
   # Internal: Exposes attributes to the template.
   presenter: =>
@@ -55,24 +50,28 @@ class @Melnitz.Thread extends Backbone.View
 
   # Public: Renders the HTML of this view, replacing any existing HTML.
   render: =>
-    @$el.html(this.template(this.presenter()))
+    @$el.html(@template(@presenter()))
     if @expanded
       _.each @emails, (email) =>
         @$el.find("[data-email-id='" + email.htmlSafeId() + "']").each (index, el) =>
           emailView = new Melnitz.EmailView({model: email})
           $(el).append(emailView.el)
           emailView.render()
-    this.delegateEvents()
+    @delegateEvents()
 
   # Public: Adds the given email to this thread.
   #
   # Triggers a "thread:addEmail" event if the email was not already part of this thread.
   addEmail: (email) =>
-    existingEmail = this.includesEmail(email)
+    existingEmail = @includesEmail(email)
     @emails[email.get("id")] = email
-    unless existingEmail
-      this.trigger("thread:addEmail", this, email)
+    @subject = Melnitz.Thread.extractSubject(email) unless @subject
+    @trigger("thread:addEmail", this, email) unless existingEmail
     # TODO: update event
+
+  # Public: Returns the thread identifier. By default, this is the subject, but subclasses may override.
+  id: =>
+    @htmlSafeSubject ?= HTMLUtil.escapeAttr(@subject) if @subject
 
   # Public: Returns whether or not the given email is in this thread.
   includesEmail: (email) =>
