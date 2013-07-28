@@ -1,0 +1,286 @@
+#= require melnitz
+#= require melnitz/views/thread
+
+# Public: A thread of emails related to a particular issue, along with the details of that issue.
+class @Melnitz.IssueThread extends Melnitz.Thread
+  baseUri: "<%= JIRA::Config.base_uri %>"
+  # TODO: pre-compile templates
+  # TODO: toggle to view other comments?
+  template: Handlebars.compile """
+    <h3 class="subject thread-subject thread-toggle">
+      <a href="{{url}}" class="thread-issue-link">{{key}}</a>: {{summary}}
+    </h3>
+    <aside class="thread-contents thread-issue-details {{detailsExpandedClassName}}">
+      <h4 class="thread-issue-details-toggle">Issue Details</h4>
+      <pre class="thread-issue-details-content thread-issue-description">{{description}}</pre>
+      <dl class="thread-issue-details-content thread-issue-details-keyed-list">
+        {{#if issuetype}}
+        <div class="row">
+          <dt>Type:</dt>
+          <dd class="thread-issue-type">
+            <img class="thread-issue-type-icon" src="{{issuetype.iconUrl}}" width="16" alt=""/>
+            <span class="thread-issue-type-text">{{issuetype.name}}</span>
+          </dd>
+        </div>
+        {{/if}}
+        {{#if priority}}
+        <div class="row">
+          <dt>Priority:</dt>
+          <dd class="thread-issue-priority">
+            <img class="thread-issue-priority-icon" src="{{priority.iconUrl}}" width="16" alt=""/>
+            <span class="thread-issue-priority-text">{{priority.name}}</span>
+          </dd>
+        </div>
+        {{/if}}
+        {{#if affectsVersions}}
+        <div class="row">
+          <dt>Affects Versions:</dt>
+          <!-- FIXME: new row + offset for each > 1 -->
+          {{#each affectsVersions}}
+          <dd class="thread-issue-affectsversion">{{name}}</dd>
+          {{/each}}
+        </div>
+        {{/if}}
+        {{#if components}}
+        <div class="row">
+          <dt>Components:</dt>
+          <!-- FIXME: new row + offset for each > 1 -->
+          {{#each components}}
+          <dd class="thread-issue-component">
+            <a href="{{url}}">{{name}}</a>
+          </dd>
+          {{/each}}
+        </div>
+        {{/if}}
+        {{#if labels}}
+        <div class="row">
+          <dt>Labels:</dt>
+          <!-- FIXME: new row + offset for each > 1 -->
+          {{#each labels}}
+          <dd class="thread-issue-label">
+            <a href="{{url}}">{{name}}</a>
+          </dd>
+          {{/each}}
+          {{/if}}
+        </div>
+        {{#if status}}
+        <div class="row">
+          <dt>Status:</dt>
+          <dd class="thread-issue-status">
+            <img class="thread-issue-status-icon" src="{{status.iconUrl}}" width="16" alt=""/>
+            <span class="thread-issue-status-text">{{status.name}}</span>
+          </dd>
+        </div>
+        {{/if}}
+        <div class="row">
+          <dt>Resolution:</dt>
+          <dd class="thread-issue-resolution">
+        {{#if resolution}}
+            {{resolution}}
+        {{else}}
+            Unresolved
+        {{/if}}
+          </dd>
+        </div>
+        {{#if fixVersions}}
+        <div class="row">
+          <dt>Fix Versions:</dt>
+          <!-- FIXME: new row + offset for each > 1 -->
+          {{#each fixVersions}}
+          <dd class="thread-issue-fixversion">
+            <a href="{{url}}">{{name}}</a>
+          </dd>
+          {{/each}}
+        </div>
+        {{/if}}
+        {{#if assignee}}
+        <div class="row">
+          <dt>Assignee:</dt>
+          <dd class="thread-issue-assignee">
+            <a href="{{assignee.url}}">
+              <img class="thread-issue-assignee-icon" src="{{assignee.iconUrl}}" width="16" alt=""/>
+              <span class="thread-issue-assignee-text">{{assignee.displayName}}</span>
+            </a>
+          </dd>
+        </div>
+        {{/if}}
+        {{#if reporter}}
+        <div class="row">
+          <dt>Reporter:</dt>
+          <dd class="thread-issue-reporter">
+            <a href="{{reporter.url}}">
+              <img class="thread-issue-reporter-icon" src="{{reporter.iconUrl}}" width="16" alt=""/>
+              <span class="thread-issue-reporter-text">{{reporter.displayName}}</span>
+            </a>
+          </dd>
+        </div>
+        {{/if}}
+        {{#if created}}
+        <div class="row">
+          <dt>Created:</dt>
+          <dd class="thread-issue-created"><time datetime="{{created}}">{{createdDisplay}}</time></dd>
+        </div>
+        {{/if}}
+        {{#if updated}}
+        <div class="row">
+          <dt>Updated:</dt>
+          <dd class="thread-issue-updated"><time datetime="{{updated}}">{{updatedDisplay}}</time></dd>
+        </div>
+        {{/if}}
+      </dl>
+      {{#if issuelinks}}
+      <h5 class="thread-issue-details-content">Issue Links</h5>
+      <ul class="thread-issue-details-content thread-issue-links">
+        {{#each issuelinks}}
+        <li class="thread-issue-link">
+          <span class="thread-issue-link-type">{{type}}</span>
+          {{#if issuetype}}
+          <img class="thread-issue-link-issuetype" src="{{issuetype.iconUrl}}" width="16" alt="{{issuetype.name}}"/>
+          {{/if}}
+          <span class="thread-issue-link-summary">
+            <a href="{{url}}" class="thread-issue-link-link">{{key}}</a>: {{summary}}
+          </span>
+          {{#if priority}}
+          <img class="thread-issue-link-priority" src="{{priority.iconUrl}}" width="16" alt="{{priority.name}}"/>
+          <img class="thread-issue-link-status" src="{{status.iconUrl}}" width="16" alt="{{status.name}}"/>
+          {{/if}}
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+      {{#if subtasks}}
+      <h5 class="thread-issue-details-content">Subtasks</h5>
+      <ul class="thread-issue-details-content thread-issue-subtasks">
+        {{#each subtasks}}
+        <li class="thread-issue-subtask">
+          {{#if issuetype}}
+          <img class="thread-issue-subtask-issuetype" src="{{issuetype.iconUrl}}" width="16" alt="{{issuetype.name}}"/>
+          {{/if}}
+          <span class="thread-issue-subtask-summary">
+            <a href="{{url}}" class="thread-issue-subtask-link">{{key}}</a>: {{summary}}
+          </span>
+          {{#if priority}}
+          <img class="thread-issue-subtask-priority" src="{{priority.iconUrl}}" width="16" alt="{{priority.name}}"/>
+          <img class="thread-issue-subtask-status" src="{{status.iconUrl}}" width="16" alt="{{status.name}}"/>
+          {{/if}}
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </aside>
+    <ol class="thread-contents emails-list">
+      {{#each emails}}
+      <li class="email-list-item {{expandedClassName}}" data-email-id="{{id}}"></li>
+      {{/each}}
+    </ol>
+    """
+
+  events: ->
+    _.extend super,
+      "click .thread-issue-details-toggle": "toggleThreadIssueDetails"
+
+  presenter: =>
+    presenter = _.extend super, @issueDetails?.fields,
+      createdDisplay: @formatTimestamp(@issueDetails?.fields.created)
+      detailsExpandedClassName: @detailsExpandedClassName()
+      key: @issueDetails?.key
+      updatedDisplay: @formatTimestamp(@issueDetails?.fields.updated)
+      url: @issueUrl(@issueDetails?.key)
+    if @issueDetails?.fields.assignee
+      presenter.assignee = _.defaults
+        iconUrl: @issueDetails.fields.assignee.avatarUrls['16x16']
+        url: @userUrl(@issueDetails.fields.assignee.name)
+      , @issueDetails.fields.assignee
+    if @issueDetails?.fields.components
+      presenter.components = _.map @issueDetails.fields.components, (component) =>
+        _.defaults
+          url: @componentUrl(@issueDetails.fields.project.key, component.id)
+        , component
+    if @issueDetails?.fields.fixVersions
+      presenter.fixVersions = _.map @issueDetails.fields.fixVersions, (fixVersion) =>
+        _.defaults
+          url: @fixVersionUrl(@issueDetails.fields.project.key, fixVersion.id)
+        , fixVersion
+    if @issueDetails?.fields.labels
+      presenter.labels = _.map @issueDetails.fields.labels, (label) =>
+        name: label
+        url: @labelUrl(label)
+    if @issueDetails?.fields.reporter
+      presenter.reporter = _.defaults
+        iconUrl: @issueDetails.fields.reporter.avatarUrls['16x16']
+        url: @userUrl(@issueDetails.fields.reporter.name)
+      , @issueDetails.fields.reporter
+    if @issueDetails?.fields.resolution
+      presenter.resolution = @issueDetails.fields.resolution.name
+    if @issueDetails?.fields.issuelinks
+      presenter.issuelinks = _.map @issueDetails.fields.issuelinks, (issuelink) =>
+        if issuelink.inwardIssue
+          key: issuelink.inwardIssue.key
+          issuetype: issuelink.inwardIssue.fields.issuetype
+          priority: issuelink.inwardIssue.fields.priority
+          status: issuelink.inwardIssue.fields.status
+          summary: issuelink.inwardIssue.fields.summary
+          type: issuelink.type.inward
+          url: @issueUrl(issuelink.inwardIssue.key)
+        else
+          key: issuelink.outwardIssue.key
+          issuetype: issuelink.outwardIssue.fields.issuetype
+          priority: issuelink.outwardIssue.fields.priority
+          status: issuelink.outwardIssue.fields.status
+          summary: issuelink.outwardIssue.fields.summary
+          type: issuelink.type.outward
+          url: @issueUrl(issuelink.outwardIssue.key)
+    if @issueDetails?.fields.subtasks
+      presenter.subtasks = _.map @issueDetails.fields.subtasks, (subtask) =>
+        _.defaults
+          key: subtask.key
+          url: @issueUrl(subtask.key)
+        , subtask.fields
+    presenter
+
+  id: =>
+    @issueKey ? super
+
+  # Public: Assigns the given issueDetails and the issueKey from those details.
+  setIssueDetails: (issueDetails) =>
+    @issueDetails = issueDetails
+    @issueKey = issueDetails?.key
+
+  # Internal: Returns the URL to a component for a particular project in JIRA.
+  componentUrl: (projectKey, componentId) =>
+    "#{@baseUri}/browse/#{projectKey}/component/#{componentId}"
+
+  # Internal: Returns the appropriate HTML class names for whether the thread details are expanded or collapsed.
+  detailsExpandedClassName: =>
+    if @detailsExpanded
+      "expanded thread-issue-details-expanded"
+    else
+      "collapsed thread-issue-details-collapsed"
+
+  # Internal: Returns the URL to a fixVersion for a particular project in JIRA.
+  fixVersionUrl: (projectKey, fixVersionId) =>
+    "#{@baseUri}/browse/#{projectKey}/fixforversion/#{fixVersionId}"
+
+  # Internal: Formats the given ISO-8601 timestamp to a human-readable form.
+  # FIXME: use moment or something lighter
+  formatTimestamp: (timestamp) ->
+    timestamp
+
+  # Internal: Returns the URL to the issue in JIRA.
+  issueUrl: (issueKey) =>
+    "#{@baseUri}/browse/#{issueKey}"
+
+  # Internal: Returns the URL to a search for the label in JIRA.
+  labelUrl: (label) =>
+    "#{@baseUri}/secure/IssueNavigator.jspa?reset=true&jqlQuery=labels+%3D+#{label}"
+
+  # Internal: Toggles whether the thread issue details are displayed.
+  toggleThreadIssueDetails: (event) =>
+    $threadIssueDetailsContainer = $(event.target).closest(".thread-issue-details")
+    $threadIssueDetailsContainer.removeClass(@detailsExpandedClassName())
+    @detailsExpanded = !@detailsExpanded
+    $threadIssueDetailsContainer.addClass(@detailsExpandedClassName())
+
+  # Internal: Returns the URL to the user in JIRA.
+  userUrl: (username) =>
+    "#{@baseUri}/secure/ViewProfile.jspa?name=#{username}"

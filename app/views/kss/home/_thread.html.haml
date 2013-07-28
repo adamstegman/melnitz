@@ -15,7 +15,7 @@
 ~ styleguide_block '2.2' do
   %section.thread
     %h3.subject.thread-subject.thread-toggle Thread subject
-    %ol.emails-list
+    %ol.thread-contents.emails-list
       %li.email-list-item
         %article.email
           %h4.subject.email-subject.email-toggle Email subject
@@ -23,7 +23,7 @@
 ~ styleguide_block '2.2.1' do
   %section.thread
     %h3.subject.thread-subject.thread-toggle Thread subject
-    %ol.emails-list
+    %ol.thread-contents.emails-list
       %li.email-list-item{class: '$modifier_class'}
         %article.email
           %h4.subject.email-subject.email-toggle Email subject
@@ -34,3 +34,54 @@
             %dd recipient@example.com
             %dt Body
             %dd some body
+
+-# see Melnitz.IssueThread
+
+~ styleguide_block '2.3' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details
+      %h4.thread-issue-details-toggle Thread details
+
+~ styleguide_block '2.3.1' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details
+      %h4.thread-issue-details-toggle Thread details
+
+~ styleguide_block '2.3.2' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details
+      %h4.thread-issue-details-toggle Thread details
+      %pre.thread-issue-description.thread-issue-details-content Thread issue description that goes on really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long.
+
+~ styleguide_block '2.3.3' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details.thread-issue-details-collapsed
+      %h4.thread-issue-details-toggle Thread details
+      %pre.thread-issue-description.thread-issue-details-content Thread issue description
+
+~ styleguide_block '2.3.4' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details.thread-issue-details-expanded
+      %h4.thread-issue-details-toggle Thread details
+      %pre.thread-issue-description.thread-issue-details-content Thread issue description
+
+~ styleguide_block '2.3.5' do
+  %section.thread
+    %h3.subject.thread-subject.thread-toggle Thread subject
+    %aside.thread-contents.thread-issue-details.thread-issue-details-expanded
+      %h4.thread-issue-details-toggle Thread details
+      %dl.thread-issue-details-content.thread-issue-details-keyed-list
+        .row
+          %dt Label:
+          %dd Value
+        .row
+          %dt Another label:
+          %dd Another value
+        .row
+          %dt A wrapped label:
+          %dd A third value

@@ -38,15 +38,22 @@ class @Melnitz.Issues extends @Melnitz.EmailsView
         parentIssueDetails = issueDetails?.fields?.parent
         subjectIssueKey = parentIssueDetails?.key ? issueDetails?.key
         subjectIssueSummary = parentIssueDetails?.fields?.summary ? issueDetails?.fields?.summary
-        this.updateThread(email, formatIssueSubject(subjectIssueKey, subjectIssueSummary), subjectIssueKey)
+        threadDetails = issueDetails if subjectIssueKey == issueDetails?.key
+        this.updateThread(email, formatIssueSubject(subjectIssueKey, subjectIssueSummary), threadDetails)
       , (error) =>
         this.updateThread(email, email.get("subject"))
 
-  # Internal: Creates/updates a thread with the given subject, and ensures the given email is in it.
-  updateThread: (email, subject, issueKey) =>
-    @threads[subject] ?= new Melnitz.Thread({subject: subject})
-    @threads[subject].issueKey = issueKey
-    @threads[subject].addEmail(email)
+  # Internal: Creates/updates a thread with the given subject and issue details, and ensures the given email is in it.
+  updateThread: (email, subject, issueDetails) =>
+    # OPTIMIZE
+    if issueDetails
+      thread = new Melnitz.IssueThread({subject: subject})
+      thread.setIssueDetails issueDetails
+      @threads[thread.id()] ?= thread
+    else
+      thread = new Melnitz.Thread({subject: subject})
+      @threads[thread.id()] ?= thread
+    @threads[thread.id()].addEmail(email)
     this.render()
 
   # Internal: Returns a promise for the issue details related to the given email.

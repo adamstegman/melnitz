@@ -18,5 +18,6 @@ $(document).foundation();
 
 @Melnitz.router = new @Melnitz.Router
 
+# FIXME: this should not be routing to / when on /styles
 Backbone.history.start({pushState: true})
 $(document).on("click", "a.nav-link", @Melnitz.navigate)
