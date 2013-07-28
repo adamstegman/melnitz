@@ -27,5 +27,5 @@ Melnitz::Application.routes.draw do
     resources :issue, only: [:show]
   end
 
-  mount Kss::Engine => '/styles' if Rails.env.development?
+  mount Kss::Engine => '/styles' if defined? Kss
 end
